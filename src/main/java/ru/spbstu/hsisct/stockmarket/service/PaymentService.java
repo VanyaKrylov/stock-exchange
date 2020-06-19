@@ -31,13 +31,20 @@ public class PaymentService {
         log.info(eventPublisher.toString());
     }
 
-    public void publish(@NonNull String msg) {}
+    @Transactional
+    public void publish(@NonNull String msg1) {
+        jmsTemplate.send(destination, session -> {
+            Message msg = session.createTextMessage(msg1);
+            msg.setStringProperty("whos", "not yours");
+            return msg;
+        });
+    }
 
     @Transactional
     public void send(@NonNull String text) {
         jmsTemplate.send(destination, session -> {
             Message msg = session.createTextMessage(text);
-            msg.setStringProperty("whos", "your");
+            msg.setStringProperty("whos", "yours");
             return msg;
         });
     }

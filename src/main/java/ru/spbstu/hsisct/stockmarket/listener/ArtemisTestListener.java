@@ -15,14 +15,17 @@ public class ArtemisTestListener {
 
     @Autowired
     private Test testRepo;
-    private final String yours = "your";
+    private final String yours = "yours";
     private final String notYours = "not yours";
 
     @Transactional
     @JmsListener(destination = "${jms.queue.destination}", selector = "whos = '" + yours + "'")
     public void onMessage(@NonNull String msg) {
-        testRepo.save(new TestEntity(13l, null));
+        TestEntity entity = testRepo.findById(7L).orElseThrow();
+        entity.setText(msg);
+        testRepo.save(entity);
     }
+
 
     @JmsListener(destination = "${jms.queue.destination}", selector = "whos = '" + notYours + "'")
     public void onMessage1(String msg) {

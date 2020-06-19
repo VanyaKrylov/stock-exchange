@@ -25,7 +25,10 @@ public class StockMarketApplication {
     @Bean
     public CommandLineRunner commandLineRunner(PaymentService paymentService) {
         return args -> {
-            paymentService.send("Hello again, Artemis!");
+            for (int i = 0; i < 15; i++) {
+                paymentService.send(i + ": Hello again, Atomikos!");
+                paymentService.publish("Hi!");
+            }
         };
     }
 
