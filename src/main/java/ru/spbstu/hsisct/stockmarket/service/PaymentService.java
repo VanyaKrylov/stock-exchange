@@ -33,7 +33,7 @@ public class PaymentService {
 
     public void publish(@NonNull String msg) {}
 
-    @Transactional//(transactionManager = "jmsTransactionManager")
+    @Transactional
     public void send(@NonNull String text) {
         jmsTemplate.send(destination, session -> {
             Message msg = session.createTextMessage(text);

@@ -1,5 +1,6 @@
 package ru.spbstu.hsisct.stockmarket.listener;
 
+import lombok.NonNull;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jms.annotation.JmsListener;
@@ -19,9 +20,8 @@ public class ArtemisTestListener {
 
     @Transactional
     @JmsListener(destination = "${jms.queue.destination}", selector = "whos = '" + yours + "'")
-    public void onMessage(String msg) {
-        testRepo.save(new TestEntity(13l, msg));
-        log.info("From 0:" + msg);
+    public void onMessage(@NonNull String msg) {
+        testRepo.save(new TestEntity(13l, null));
     }
 
     @JmsListener(destination = "${jms.queue.destination}", selector = "whos = '" + notYours + "'")
