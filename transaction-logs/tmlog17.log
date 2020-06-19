@@ -1,0 +1,12 @@
+{"id":"192.168.56.1.tm159252882796200001","wasCommitted":true,"participants":[{"uri":"192.168.56.1.tm1","state":"COMMITTING","expires":1592528837925,"resourceName":"jmsConnectionFactory"}]}
+{"id":"192.168.56.1.tm159252882796200001","wasCommitted":true,"participants":[{"uri":"192.168.56.1.tm1","state":"TERMINATED","expires":1592528837963,"resourceName":"jmsConnectionFactory"}]}
+{"id":"192.168.56.1.tm159252882807200002","wasCommitted":false,"participants":[{"uri":"192.168.56.1.tm2","state":"TERMINATED","expires":1592528838071,"resourceName":"dataSource"}]}
+{"id":"192.168.56.1.tm159252882819400003","wasCommitted":false,"participants":[{"uri":"192.168.56.1.tm3","state":"TERMINATED","expires":1592528838097,"resourceName":"dataSource"}]}
+{"id":"192.168.56.1.tm159252882822900004","wasCommitted":false,"participants":[{"uri":"192.168.56.1.tm4","state":"TERMINATED","expires":1592528838133,"resourceName":"dataSource"}]}
+{"id":"192.168.56.1.tm159252882829600005","wasCommitted":false,"participants":[{"uri":"192.168.56.1.tm5","state":"TERMINATED","expires":1592528838203,"resourceName":"dataSource"}]}
+{"id":"192.168.56.1.tm159252882834500006","wasCommitted":false,"participants":[{"uri":"192.168.56.1.tm6","state":"TERMINATED","expires":1592528838252,"resourceName":"dataSource"}]}
+{"id":"192.168.56.1.tm159252882839300007","wasCommitted":false,"participants":[{"uri":"192.168.56.1.tm7","state":"TERMINATED","expires":1592528838298,"resourceName":"dataSource"}]}
+{"id":"192.168.56.1.tm159252882844200008","wasCommitted":false,"participants":[{"uri":"192.168.56.1.tm8","state":"TERMINATED","expires":1592528838345,"resourceName":"dataSource"}]}
+{"id":"192.168.56.1.tm159252882849200009","wasCommitted":false,"participants":[{"uri":"192.168.56.1.tm9","state":"TERMINATED","expires":1592528838396,"resourceName":"dataSource"}]}
+{"id":"192.168.56.1.tm159252882856400010","wasCommitted":false,"participants":[{"uri":"192.168.56.1.tm10","state":"TERMINATED","expires":1592528838471,"resourceName":"dataSource"}]}
+{"id":"192.168.56.1.tm159252882861500011","wasCommitted":false,"participants":[{"uri":"192.168.56.1.tm11","state":"TERMINATED","expires":1592528838521,"resourceName":"dataSource"}]}
