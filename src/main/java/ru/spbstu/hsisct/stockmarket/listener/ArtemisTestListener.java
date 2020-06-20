@@ -56,4 +56,5 @@ public class ArtemisTestListener {
         String to = (String) messageHeaderAccessor.getHeader("to");
         log.error("DLQ: " + msg + " " + destination + from + to);
     }
+
 }

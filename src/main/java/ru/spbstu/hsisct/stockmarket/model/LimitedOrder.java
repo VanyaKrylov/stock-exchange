@@ -12,5 +12,5 @@ import java.math.BigDecimal;
 public class LimitedOrder extends Order {
 
     BigDecimal maxPrice;
-    BigDecimal minProce;
+    BigDecimal minPrice;
 }

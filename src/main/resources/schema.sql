@@ -4,11 +4,12 @@ drop table if exists BROKER;
 drop table if exists COMPANY;
 drop table if exists FINANCIAL_REPORT;
 drop table if exists INDIVIDUAL;
-drop table if exists STOCK_ORDER;
+drop table if exists STOCK_ORDER cascade ;
 drop table if exists LIMITED_ORDER;
 drop table if exists MARKET_ORDER;
 drop table if exists PAYMENT;
-drop table if exists STOCK;
+drop table if exists STOCK CASCADE;
+drop table if exists STOCKS_ORDERS;
 
 -- create table TEST
 -- (
@@ -58,6 +59,7 @@ create table INDIVIDUAL
 create table STOCK_ORDER
 (
     id BIGSERIAL PRIMARY KEY,
+    order_status varchar(32) not null,
     investor_id BIGINT not null,
     operation_type varchar(32) not null,
     foreign key (investor_id) references INVESTOR(id) ON UPDATE CASCADE ON DELETE CASCADE
@@ -89,8 +91,15 @@ create table STOCK
 (
     id BIGSERIAL PRIMARY KEY,
     type varchar(32) not null,
+    price NUMERIC(16,2) not null,
     investor_id BIGINT,
     company_id BIGINT not null,
     foreign key (investor_id) references INVESTOR(id) ON UPDATE CASCADE ON DELETE CASCADE,
     foreign key (company_id) references COMPANY(id) ON UPDATE CASCADE ON DELETE CASCADE
 );
+
+create table STOCKS_ORDERS
+(
+    stock_id BIGINT not null references STOCK(id),
+    stock_order_id BIGINT not null references STOCK_ORDER(id)
+)

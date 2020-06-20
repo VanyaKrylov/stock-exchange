@@ -2,6 +2,7 @@ package ru.spbstu.hsisct.stockmarket.model;
 
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import lombok.ToString;
 import org.springframework.data.annotation.Immutable;
 
 import javax.persistence.*;
@@ -18,9 +19,11 @@ public class FinancialReport {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+    @ToString.Exclude
     @ManyToOne
     @JoinColumn(name = "company_id")
     private Company company;
+
     private BigDecimal earnings;
     private BigDecimal expenses;
     private BigDecimal capital;

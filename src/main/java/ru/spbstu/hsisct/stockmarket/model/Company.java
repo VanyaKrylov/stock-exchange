@@ -23,7 +23,7 @@ public class Company {
 
     @NonNull private BigDecimal capital;
 
-    @OneToMany(cascade = CascadeType.ALL, mappedBy = "company")
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "company", fetch = FetchType.EAGER)
     private List<FinancialReport> financialReports;
 
 }
