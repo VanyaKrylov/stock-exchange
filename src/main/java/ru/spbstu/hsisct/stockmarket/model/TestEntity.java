@@ -1,23 +1,29 @@
 package ru.spbstu.hsisct.stockmarket.model;
 
-import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.EqualsAndHashCode;
-import lombok.NoArgsConstructor;
+import lombok.*;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
+import ru.spbstu.hsisct.stockmarket.repository.Test;
 
 import javax.persistence.*;
 
 @Data
 @Entity
 @Table(name = "test")
+@Component
 @EqualsAndHashCode(of = "id")
 @NoArgsConstructor
-@AllArgsConstructor
+@RequiredArgsConstructor
 public class TestEntity {
+
+    @Autowired
+    @Transient
+    private Test test;
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+    @NonNull
     private String text;
 }

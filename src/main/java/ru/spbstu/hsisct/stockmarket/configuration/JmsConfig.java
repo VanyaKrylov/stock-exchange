@@ -8,6 +8,7 @@ import org.springframework.jms.config.DefaultJmsListenerContainerFactory;
 import org.springframework.util.ErrorHandler;
 
 import javax.jms.ConnectionFactory;
+import javax.jms.Session;
 
 @Slf4j
 @Configuration
@@ -18,6 +19,7 @@ public class JmsConfig {
         DefaultJmsListenerContainerFactory defaultJmsListenerContainerFactory = new DefaultJmsListenerContainerFactory();
         defaultJmsListenerContainerFactory.setConnectionFactory(connectionFactory);
         defaultJmsListenerContainerFactory.setSessionTransacted(true);
+        defaultJmsListenerContainerFactory.setSessionAcknowledgeMode(Session.SESSION_TRANSACTED);
         defaultJmsListenerContainerFactory.setErrorHandler(errorHandler());
         return defaultJmsListenerContainerFactory;
     }

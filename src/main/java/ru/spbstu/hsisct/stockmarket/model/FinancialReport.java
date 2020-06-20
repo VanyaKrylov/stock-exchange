@@ -1,14 +1,29 @@
 package ru.spbstu.hsisct.stockmarket.model;
 
 import lombok.Data;
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.NoArgsConstructor;
+import org.springframework.data.annotation.Immutable;
+
+import javax.persistence.*;
+import java.math.BigDecimal;
 
 @Data
+@Entity
+@Table(name = "financial_report")
+@Immutable
+@NoArgsConstructor
 public class FinancialReport {
 
-    private final double earnings;
-    private final double expenses;
-    private final double capital;
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
+
+    @ManyToOne
+    @JoinColumn(name = "company_id")
+    private Company company;
+    private BigDecimal earnings;
+    private BigDecimal expenses;
+    private BigDecimal capital;
 
 
 }

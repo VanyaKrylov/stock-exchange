@@ -22,13 +22,15 @@ public class StockMarketApplication {
 //        return new JmsTransactionManager(connectionFactory);
 //    }
 
+
     @Bean
     public CommandLineRunner commandLineRunner(PaymentService paymentService) {
         return args -> {
-            for (int i = 0; i < 15; i++) {
-                paymentService.send(i + ": Hello again, Atomikos!");
-                paymentService.publish("Hi!");
-            }
+//            for (int i = 0; i < 1; i++) {
+//                paymentService.send(i + ": Hello again, Atomikos! Testing Tx 2");
+//                paymentService.publish("Hi!");
+//            }
+
         };
     }
 
