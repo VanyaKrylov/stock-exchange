@@ -1,4 +1,4 @@
-package ru.spbstu.hsisct.stockmarket.model;
+/*package ru.spbstu.hsisct.stockmarket.model;
 
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -29,4 +29,4 @@ public class FinancialReport {
     private BigDecimal capital;
 
 
-}
+}*/

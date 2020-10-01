@@ -2,11 +2,15 @@ package ru.spbstu.hsisct.stockmarket.model;
 
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import lombok.NonNull;
+import org.springframework.lang.NonNull;
 
-import javax.persistence.*;
+import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
+import javax.persistence.SequenceGenerator;
+import javax.persistence.Table;
 import java.math.BigDecimal;
-import java.util.List;
 import java.util.UUID;
 
 @Data
@@ -16,14 +20,12 @@ import java.util.UUID;
 public class Company {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "company_id_gen")
+    @SequenceGenerator(name = "company_id_gen", sequenceName = "company_id_seq")
     private Long id;
 
-    @NonNull private final UUID bankAccountId = UUID.randomUUID();
+    private final UUID bankAccountId = UUID.randomUUID();
 
-    @NonNull private BigDecimal capital;
-
-    @OneToMany(cascade = CascadeType.ALL, mappedBy = "company", fetch = FetchType.EAGER)
-    private List<FinancialReport> financialReports;
-
+    @NonNull
+    private BigDecimal capital;
 }

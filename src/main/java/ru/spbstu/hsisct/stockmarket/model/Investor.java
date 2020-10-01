@@ -1,4 +1,4 @@
-package ru.spbstu.hsisct.stockmarket.model;
+/*package ru.spbstu.hsisct.stockmarket.model;
 
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -31,4 +31,4 @@ public abstract class Investor {
      @OneToMany(cascade = CascadeType.ALL, mappedBy = "issuer", fetch = FetchType.LAZY)
      @Filter(name = "status_filter", condition = "order_status = ACTIVE")
      protected List<Order> orders;
-}
+}*/

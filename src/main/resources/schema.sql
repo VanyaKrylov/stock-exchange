@@ -1,5 +1,5 @@
 -- drop table if exists TEST;
-drop table if exists INVESTOR;
+/*drop table if exists INVESTOR;
 drop table if exists BROKER;
 drop table if exists COMPANY;
 drop table if exists FINANCIAL_REPORT;
@@ -100,6 +100,110 @@ create table STOCK
 
 create table STOCKS_ORDERS
 (
-    stock_id BIGINT not null references STOCK(id),
-    stock_order_id BIGINT not null references STOCK_ORDER(id)
+    stock_id BIGINT NOT NULL,
+    stock_order_id BIGINT NOT NULL,
+    FOREIGN KEY (stock_id) REFERENCES STOCK(id),
+    FOREIGN KEY (stock_order_id) REFERENCES STOCK_ORDER(id),
+    UNIQUE (stock_id, stock_order_id)
+);
+
+create table STOCKS_INVESTORS
+(
+    stock_id BIGINT NOT NULL,
+    individual_id BIGINT,
+    broker_id BIGINT,
+    FOREIGN KEY (stock_id) REFERENCES STOCK(id),
+    FOREIGN KEY (individual_id) REFERENCES INDIVIDUAL(id),
+    FOREIGN KEY (broker_id) REFERENCES BROKER(id)
+)*/
+
+
+
+/*DROP TABLE IF EXISTS "broker" cascade;
+DROP TABLE IF EXISTS "stock" cascade;
+DROP TABLE IF EXISTS "individual" cascade;
+DROP TABLE IF EXISTS "order" cascade;
+DROP TABLE IF EXISTS "company" cascade;
+DROP TABLE IF EXISTS "individuals_stocks" cascade;
+DROP TABLE IF EXISTS "stocks_owners" cascade;
+*/
+
+CREATE TABLE IF NOT EXISTS "company" (
+    "id" bigserial PRIMARY KEY NOT NULL,
+    "bank_account_id" uuid NOT NULL UNIQUE,
+    "capital" NUMERIC(16,2) NOT NULL
+);
+
+CREATE TABLE IF NOT EXISTS "stock" (
+   "id" bigserial PRIMARY KEY NOT NULL,
+   "company_id" bigint NOT NULL,
+   FOREIGN KEY ("company_id") REFERENCES "company"("id") ON UPDATE CASCADE ON DELETE CASCADE
+);
+
+CREATE TABLE IF NOT EXISTS "broker" (
+    "id" bigserial PRIMARY KEY NOT NULL,
+    "bank_account_id" uuid NOT NULL UNIQUE,
+    fee NUMERIC(16,2) NOT NULL,
+    "capital" NUMERIC(16,2) NOT NULL
+);
+
+CREATE TABLE IF NOT EXISTS "individual" (
+    "id" bigserial PRIMARY KEY NOT NULL,
+    "broker_id" bigint NOT NULL,
+    "bank_account_id" uuid NOT NULL UNIQUE,
+    "capital" NUMERIC(16,2) NOT NULL,
+    FOREIGN KEY ("broker_id") REFERENCES "broker"("id") ON UPDATE CASCADE ON DELETE CASCADE
+);
+
+CREATE TABLE IF NOT EXISTS "order" (
+    "id" bigserial PRIMARY KEY NOT NULL,
+    "broker_id" bigint NOT NULL,
+    "company_id" bigint NOT NULL,
+    "individual_id" bigint NOT NULL,
+    "amount" bigint NOT NULL,
+    "min_price" bigint,
+    "max_price" bigint,
+    FOREIGN KEY ("broker_id") REFERENCES "broker"("id") ON UPDATE CASCADE ON DELETE CASCADE,
+    FOREIGN KEY ("company_id") REFERENCES "company"("id") ON UPDATE CASCADE ON DELETE CASCADE,
+    FOREIGN KEY ("individual_id") REFERENCES "individual"("id") ON UPDATE CASCADE ON DELETE CASCADE
+);
+
+CREATE TABLE IF NOT EXISTS "individuals_stocks" (
+    "id" bigserial PRIMARY KEY NOT NULL,
+    "stock_id" bigint NOT NULL,
+    "individual_id" bigint NOT NULL,
+    "active" bool NOT NULL,
+    FOREIGN KEY ("stock_id") REFERENCES "stock"("id") ON UPDATE CASCADE ON DELETE CASCADE,
+    FOREIGN KEY ("individual_id") REFERENCES "individual"("id") ON UPDATE CASCADE ON DELETE CASCADE
+);
+
+CREATE TABLE IF NOT EXISTS "stocks_owners"
+(
+    "id" bigserial PRIMARY KEY NOT NULL,
+    "stock_id" bigint NOT NULL,
+    "broker_id" bigint NOT NULL,
+    "active" bool NOT NULL,
+    FOREIGN KEY ("stock_id") REFERENCES "stock"("id") ON UPDATE CASCADE ON DELETE CASCADE,
+    FOREIGN KEY ("broker_id") REFERENCES "broker"("id") ON UPDATE CASCADE ON DELETE CASCADE
+);
+
+CREATE TABLE IF NOT EXISTS "payment"
+(
+    "id" bigserial PRIMARY KEY NOT NULL,
+    "payer" uuid NOT NULL,
+    "recipient" uuid NOT NULL,
+    "amount" NUMERIC(16,2) NOT NULL,
+    "timestamp" timestamp NOT NULL
 )
+
+/*ALTER TABLE "stock" ADD CONSTRAINT "stock_fk0" FOREIGN KEY ("company_id") REFERENCES "company"("id") ON UPDATE CASCADE ON DELETE CASCADE;
+ALTER TABLE "individual" ADD CONSTRAINT "individual_fk0" FOREIGN KEY ("broker_id") REFERENCES "broker"("id") ON UPDATE CASCADE ON DELETE CASCADE;
+ALTER TABLE "order" ADD CONSTRAINT "order_fk0" FOREIGN KEY ("broker_id") REFERENCES "broker"("id") ON UPDATE CASCADE ON DELETE CASCADE;
+ALTER TABLE "order" ADD CONSTRAINT "order_fk1" FOREIGN KEY ("company_id") REFERENCES "company"("id") ON UPDATE CASCADE ON DELETE CASCADE;
+ALTER TABLE "order" ADD CONSTRAINT "order_fk2" FOREIGN KEY ("individual_id") REFERENCES "individual"("id") ON UPDATE CASCADE ON DELETE CASCADE;
+ALTER TABLE "individuals_stocks" ADD CONSTRAINT "individuals_stocks_fk0" FOREIGN KEY ("stock_id") REFERENCES "stock"("id") ON UPDATE CASCADE ON DELETE CASCADE;
+ALTER TABLE "individuals_stocks" ADD CONSTRAINT "individuals_stocks_fk1" FOREIGN KEY ("individual_id") REFERENCES "individual"("id") ON UPDATE CASCADE ON DELETE CASCADE;
+ALTER TABLE "stocks_owners" ADD CONSTRAINT "stocks_owners_fk0" FOREIGN KEY ("stock_id") REFERENCES "stock"("id") ON UPDATE CASCADE ON DELETE CASCADE;
+ALTER TABLE "stocks_owners" ADD CONSTRAINT "stocks_owners_fk1" FOREIGN KEY ("broker_id") REFERENCES "broker"("id") ON UPDATE CASCADE ON DELETE CASCADE;
+
+*/
