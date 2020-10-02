@@ -1,25 +1,25 @@
 package ru.spbstu.hsisct.stockmarket;
 
 import lombok.RequiredArgsConstructor;
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.annotation.Bean;
 import org.springframework.jms.annotation.EnableJms;
 import org.springframework.transaction.annotation.EnableTransactionManagement;
-import org.springframework.transaction.annotation.Transactional;
-import ru.spbstu.hsisct.stockmarket.model.Broker;
+import ru.spbstu.hsisct.stockmarket.enums.StockType;
 import ru.spbstu.hsisct.stockmarket.model.Company;
 import ru.spbstu.hsisct.stockmarket.model.Stock;
 import ru.spbstu.hsisct.stockmarket.repository.BrokerRepository;
 import ru.spbstu.hsisct.stockmarket.repository.CompanyRepository;
 import ru.spbstu.hsisct.stockmarket.repository.IndividualRepository;
-import ru.spbstu.hsisct.stockmarket.service.PaymentService;
+import ru.spbstu.hsisct.stockmarket.repository.StockRepository;
 
 import java.math.BigDecimal;
 import java.util.List;
 
+@Slf4j
 @EnableJms
 @SpringBootApplication
 @RequiredArgsConstructor
@@ -37,14 +37,16 @@ public class StockMarketApplication {
 
     private final BrokerRepository brokerRepository;
     private final CompanyRepository companyRepository;
+    private final StockRepository stockRepository;
     private final IndividualRepository individualRepository;
 
 
     @Bean
 //    @Transactional
-    public CommandLineRunner commandLineRunner(PaymentService paymentService) {
+    public CommandLineRunner commandLineRunner() {
         return args -> {
-
+            testStock();
+            testCompany();
 //            for (int i = 0; i < 1; i++) {
 //                paymentService.send(i + ": Hello again, Atomikos! Testing Tx 2");
 //                paymentService.publish("Hi!");
@@ -81,8 +83,10 @@ public class StockMarketApplication {
         };
     }
 
-    private void testBroker() {
-
+    private void testStock() {
+        var company = companyRepository.findAll().iterator().next();
+        var stock = stockRepository.save(new Stock(StockType.COMMON, company));
+        log.info(String.valueOf(stockRepository.findById(stock.getId()).orElse(stock)));
     }
 
     private void testCompany() {

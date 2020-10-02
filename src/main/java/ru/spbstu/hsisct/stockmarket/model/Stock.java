@@ -4,6 +4,7 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
+import org.hibernate.annotations.CreationTimestamp;
 import ru.spbstu.hsisct.stockmarket.enums.StockType;
 
 import javax.persistence.CascadeType;
@@ -30,13 +31,13 @@ public class Stock {
     @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "stock_gen")
     @SequenceGenerator(name = "stock_gen", sequenceName = "stock_id_seq", allocationSize = 1)
     private Long id;
-    @NonNull
+    @CreationTimestamp
     private LocalDateTime issued;
     @NonNull
     @Enumerated(EnumType.STRING)
     private StockType type;
     @NonNull
-    @OneToOne(cascade = CascadeType.ALL)
+    @OneToOne(cascade = CascadeType.MERGE)
     @JoinColumn(name = "company_id", referencedColumnName = "id")
     private Company company;
 }

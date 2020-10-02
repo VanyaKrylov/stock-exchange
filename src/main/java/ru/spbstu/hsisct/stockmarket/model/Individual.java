@@ -32,7 +32,7 @@ public class Individual {
     @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "individual_gen")
     @SequenceGenerator(name = "individual_gen", sequenceName = "individual_id_seq", allocationSize = 1)
     private Long id;
-    @OneToOne(cascade = CascadeType.ALL)
+    @OneToOne(cascade = CascadeType.MERGE)
     @JoinColumn(name = "broker_id", referencedColumnName = "id")
     private Broker broker;
     @Nullable
