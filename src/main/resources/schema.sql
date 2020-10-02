@@ -27,7 +27,7 @@ create table INVESTOR
 create table BROKER
 (
     id BIGINT PRIMARY KEY,
-    fee NUMERIC(16,2) not null,
+    fee numeric(16,2) not null,
     foreign key (id) references INVESTOR(id)
 );
 
@@ -35,16 +35,16 @@ create table COMPANY
 (
     id BIGSERIAL PRIMARY KEY,
     bank_account_id uuid not null unique,
-    capital NUMERIC(16,2) not null
+    capital numeric(16,2) not null
 );
 
 create table FINANCIAL_REPORT
 (
     id BIGSERIAL PRIMARY KEY,
     company_id BIGINT not null,
-    earnings NUMERIC(16,2) not null,
-    expenses NUMERIC(16,2) not null,
-    capital NUMERIC(16,2) not null,
+    earnings numeric(16,2) not null,
+    expenses numeric(16,2) not null,
+    capital numeric(16,2) not null,
     foreign key (company_id) REFERENCES COMPANY(id) ON UPDATE CASCADE ON DELETE CASCADE
 );
 
@@ -68,8 +68,8 @@ create table STOCK_ORDER
 create table LIMITED_ORDER
 (
     id BIGINT PRIMARY KEY,
-    max_price NUMERIC(16,2) NOT NULL,
-    min_price NUMERIC(16,2) NOT NULL,
+    max_price numeric(16,2) NOT NULL,
+    min_price numeric(16,2) NOT NULL,
     foreign key (id) references STOCK_ORDER(id)
 );
 
@@ -84,14 +84,14 @@ create table PAYMENT
     id BIGSERIAL PRIMARY KEY,
     payer_id uuid not null unique,
     recipient_id uuid not null unique,
-    sum NUMERIC(16,2) not null
+    sum numeric(16,2) not null
 );
 
 create table STOCK
 (
     id BIGSERIAL PRIMARY KEY,
     type varchar(32) not null,
-    price NUMERIC(16,2) not null,
+    price numeric(16,2) not null,
     investor_id BIGINT,
     company_id BIGINT not null,
     foreign key (investor_id) references INVESTOR(id) ON UPDATE CASCADE ON DELETE CASCADE,
@@ -126,73 +126,79 @@ DROP TABLE IF EXISTS "order" cascade;
 DROP TABLE IF EXISTS "company" cascade;
 DROP TABLE IF EXISTS "individuals_stocks" cascade;
 DROP TABLE IF EXISTS "stocks_owners" cascade;
+DROP TABLE IF EXISTS "payment" cascade;
 */
 
-CREATE TABLE IF NOT EXISTS "company" (
+CREATE TABLE IF NOT EXISTS COMPANY (
     "id" bigserial PRIMARY KEY NOT NULL,
     "bank_account_id" uuid NOT NULL UNIQUE,
-    "capital" NUMERIC(16,2) NOT NULL
+    "capital" numeric(16,2) NOT NULL
 );
 
-CREATE TABLE IF NOT EXISTS "stock" (
+CREATE TABLE IF NOT EXISTS STOCK (
    "id" bigserial PRIMARY KEY NOT NULL,
+   "issued" timestamp NOT NULL,
+   "type" varchar(32) NOT NULL,
    "company_id" bigint NOT NULL,
-   FOREIGN KEY ("company_id") REFERENCES "company"("id") ON UPDATE CASCADE ON DELETE CASCADE
+   FOREIGN KEY ("company_id") REFERENCES COMPANY("id") ON UPDATE CASCADE ON DELETE CASCADE
 );
 
-CREATE TABLE IF NOT EXISTS "broker" (
+CREATE TABLE IF NOT EXISTS BROKER (
     "id" bigserial PRIMARY KEY NOT NULL,
     "bank_account_id" uuid NOT NULL UNIQUE,
-    fee NUMERIC(16,2) NOT NULL,
-    "capital" NUMERIC(16,2) NOT NULL
+    "fee" numeric(16,2) NOT NULL,
+    "capital" numeric(16,2) NOT NULL
 );
 
-CREATE TABLE IF NOT EXISTS "individual" (
+CREATE TABLE IF NOT EXISTS INDIVIDUAL (
     "id" bigserial PRIMARY KEY NOT NULL,
     "broker_id" bigint NOT NULL,
     "bank_account_id" uuid NOT NULL UNIQUE,
-    "capital" NUMERIC(16,2) NOT NULL,
-    FOREIGN KEY ("broker_id") REFERENCES "broker"("id") ON UPDATE CASCADE ON DELETE CASCADE
+    "capital" numeric(16,2) NOT NULL,
+    FOREIGN KEY ("broker_id") REFERENCES BROKER("id") ON UPDATE CASCADE ON DELETE CASCADE
 );
 
-CREATE TABLE IF NOT EXISTS "order" (
+CREATE TABLE IF NOT EXISTS "ORDER" (
     "id" bigserial PRIMARY KEY NOT NULL,
     "broker_id" bigint NOT NULL,
     "company_id" bigint NOT NULL,
     "individual_id" bigint NOT NULL,
-    "amount" bigint NOT NULL,
-    "min_price" bigint,
-    "max_price" bigint,
-    FOREIGN KEY ("broker_id") REFERENCES "broker"("id") ON UPDATE CASCADE ON DELETE CASCADE,
-    FOREIGN KEY ("company_id") REFERENCES "company"("id") ON UPDATE CASCADE ON DELETE CASCADE,
-    FOREIGN KEY ("individual_id") REFERENCES "individual"("id") ON UPDATE CASCADE ON DELETE CASCADE
+    "size" bigint NOT NULL,
+    "min_price" numeric(16,2),
+    "max_price" numeric(16,2),
+    "operation_type" varchar(32) NOT NULL,
+    "order_status" varchar(32) NOT NULL,
+    "public" bool NOT NULL DEFAULT FALSE,
+    FOREIGN KEY ("broker_id") REFERENCES BROKER("id") ON UPDATE CASCADE ON DELETE CASCADE,
+    FOREIGN KEY ("company_id") REFERENCES COMPANY("id") ON UPDATE CASCADE ON DELETE CASCADE,
+    FOREIGN KEY ("individual_id") REFERENCES INDIVIDUAL("id") ON UPDATE CASCADE ON DELETE CASCADE
 );
 
-CREATE TABLE IF NOT EXISTS "individuals_stocks" (
+CREATE TABLE IF NOT EXISTS INDIVIDUALS_STOCKS (
     "id" bigserial PRIMARY KEY NOT NULL,
     "stock_id" bigint NOT NULL,
     "individual_id" bigint NOT NULL,
     "active" bool NOT NULL,
-    FOREIGN KEY ("stock_id") REFERENCES "stock"("id") ON UPDATE CASCADE ON DELETE CASCADE,
-    FOREIGN KEY ("individual_id") REFERENCES "individual"("id") ON UPDATE CASCADE ON DELETE CASCADE
+    FOREIGN KEY ("stock_id") REFERENCES STOCK("id") ON UPDATE CASCADE ON DELETE CASCADE,
+    FOREIGN KEY ("individual_id") REFERENCES INDIVIDUAL("id") ON UPDATE CASCADE ON DELETE CASCADE
 );
 
-CREATE TABLE IF NOT EXISTS "stocks_owners"
+CREATE TABLE IF NOT EXISTS STOCKS_OWNERS
 (
     "id" bigserial PRIMARY KEY NOT NULL,
     "stock_id" bigint NOT NULL,
     "broker_id" bigint NOT NULL,
     "active" bool NOT NULL,
-    FOREIGN KEY ("stock_id") REFERENCES "stock"("id") ON UPDATE CASCADE ON DELETE CASCADE,
-    FOREIGN KEY ("broker_id") REFERENCES "broker"("id") ON UPDATE CASCADE ON DELETE CASCADE
+    FOREIGN KEY ("stock_id") REFERENCES STOCK("id") ON UPDATE CASCADE ON DELETE CASCADE,
+    FOREIGN KEY ("broker_id") REFERENCES BROKER("id") ON UPDATE CASCADE ON DELETE CASCADE
 );
 
-CREATE TABLE IF NOT EXISTS "payment"
+CREATE TABLE IF NOT EXISTS PAYMENT
 (
     "id" bigserial PRIMARY KEY NOT NULL,
     "payer" uuid NOT NULL,
     "recipient" uuid NOT NULL,
-    "amount" NUMERIC(16,2) NOT NULL,
+    "amount" numeric(16,2) NOT NULL,
     "timestamp" timestamp NOT NULL
 )
 

@@ -1,4 +1,4 @@
-package ru.spbstu.hsisct.stockmarket.service;
+/*package ru.spbstu.hsisct.stockmarket.service;
 
 import lombok.NonNull;
 import lombok.extern.slf4j.Slf4j;
@@ -10,7 +10,6 @@ import org.springframework.jms.core.JmsTemplate;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import ru.spbstu.hsisct.stockmarket.model.Company;
-import ru.spbstu.hsisct.stockmarket.model.Investor;
 import ru.spbstu.hsisct.stockmarket.model.TestEntity;
 import ru.spbstu.hsisct.stockmarket.repository.Test;
 
@@ -31,10 +30,6 @@ public class PaymentService {
 
     @Autowired
     private ApplicationEventPublisher eventPublisher;
-
-    public void pay(Company from, Investor to) {
-        log.info(eventPublisher.toString());
-    }
 
     @Transactional
     public void publish(@NonNull String msg1) {
@@ -70,4 +65,4 @@ public class PaymentService {
 //    public static void pay(Company from, Investor to) {
 //        pay(null, null, );
 //    }
-}
+}*/

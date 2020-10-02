@@ -1,4 +1,4 @@
-package ru.spbstu.hsisct.stockmarket.listener;
+/*package ru.spbstu.hsisct.stockmarket.listener;
 
 import lombok.NonNull;
 import lombok.extern.slf4j.Slf4j;
@@ -57,4 +57,4 @@ public class ArtemisTestListener {
         log.error("DLQ: " + msg + " " + destination + from + to);
     }
 
-}
+}*/

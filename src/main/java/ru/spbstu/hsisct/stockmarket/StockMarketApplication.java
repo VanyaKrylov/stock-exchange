@@ -1,5 +1,6 @@
 package ru.spbstu.hsisct.stockmarket;
 
+import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.SpringApplication;
@@ -8,14 +9,20 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.jms.annotation.EnableJms;
 import org.springframework.transaction.annotation.EnableTransactionManagement;
 import org.springframework.transaction.annotation.Transactional;
+import ru.spbstu.hsisct.stockmarket.model.Broker;
+import ru.spbstu.hsisct.stockmarket.model.Company;
+import ru.spbstu.hsisct.stockmarket.model.Stock;
+import ru.spbstu.hsisct.stockmarket.repository.BrokerRepository;
 import ru.spbstu.hsisct.stockmarket.repository.CompanyRepository;
-import ru.spbstu.hsisct.stockmarket.repository.FinancialReportRepository;
-import ru.spbstu.hsisct.stockmarket.repository.InvestorRepository;
+import ru.spbstu.hsisct.stockmarket.repository.IndividualRepository;
 import ru.spbstu.hsisct.stockmarket.service.PaymentService;
-import ru.spbstu.hsisct.stockmarket.util.TestService;
+
+import java.math.BigDecimal;
+import java.util.List;
 
 @EnableJms
 @SpringBootApplication
+@RequiredArgsConstructor
 @EnableTransactionManagement
 public class StockMarketApplication {
 
@@ -28,19 +35,16 @@ public class StockMarketApplication {
 //        return new JmsTransactionManager(connectionFactory);
 //    }
 
-    @Autowired
-    private CompanyRepository companyRepository;
-    @Autowired
-    private FinancialReportRepository financialReportRepository;
-    @Autowired
-    private InvestorRepository investorRepository;
-    @Autowired
-    private TestService testService;
+    private final BrokerRepository brokerRepository;
+    private final CompanyRepository companyRepository;
+    private final IndividualRepository individualRepository;
+
 
     @Bean
-    @Transactional
+//    @Transactional
     public CommandLineRunner commandLineRunner(PaymentService paymentService) {
         return args -> {
+
 //            for (int i = 0; i < 1; i++) {
 //                paymentService.send(i + ": Hello again, Atomikos! Testing Tx 2");
 //                paymentService.publish("Hi!");
@@ -73,10 +77,34 @@ public class StockMarketApplication {
 //            individual.setBroker((Broker) investorRepository.findById(1L).get());
 //            investorRepository.save(individual);
 //            investorRepository.findAll().forEach(System.out::println);
-            testService.viewAllInvestors();
+            //testService.viewAllInvestors();
         };
     }
 
+    private void testBroker() {
 
+    }
 
+    private void testCompany() {
+        var company = testSaveCompany();
+        var company2 = testFindCompany(company);
+        testDeleteCompany(company);
+        System.out.println(testFindAllCompany());
+    }
+
+    private List<Company> testFindAllCompany() {
+        return (List<Company>) companyRepository.findAll();
+    }
+
+    public Company testSaveCompany() {
+        return companyRepository.save(new Company(new BigDecimal("777.0")));
+    }
+
+    public Company testFindCompany(Company company) {
+        return companyRepository.findById(company.getId()).get();
+    }
+
+    public void testDeleteCompany(Company company) {
+        companyRepository.delete(company);
+    }
 }
