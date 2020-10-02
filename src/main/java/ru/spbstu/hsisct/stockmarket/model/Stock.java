@@ -5,7 +5,7 @@ import lombok.NoArgsConstructor;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 import org.hibernate.annotations.CreationTimestamp;
-import ru.spbstu.hsisct.stockmarket.enums.StockType;
+import ru.spbstu.hsisct.stockmarket.model.enums.StockType;
 
 import javax.persistence.CascadeType;
 import javax.persistence.Entity;

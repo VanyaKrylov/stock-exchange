@@ -8,7 +8,8 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.annotation.Bean;
 import org.springframework.jms.annotation.EnableJms;
 import org.springframework.transaction.annotation.EnableTransactionManagement;
-import ru.spbstu.hsisct.stockmarket.enums.StockType;
+import org.springframework.transaction.annotation.Transactional;
+import ru.spbstu.hsisct.stockmarket.model.enums.StockType;
 import ru.spbstu.hsisct.stockmarket.model.Company;
 import ru.spbstu.hsisct.stockmarket.model.Stock;
 import ru.spbstu.hsisct.stockmarket.repository.BrokerRepository;
@@ -42,7 +43,7 @@ public class StockMarketApplication {
 
 
     @Bean
-//    @Transactional
+    @Transactional
     public CommandLineRunner commandLineRunner() {
         return args -> {
             testStock();

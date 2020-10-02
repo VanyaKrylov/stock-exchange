@@ -6,8 +6,8 @@ import lombok.NoArgsConstructor;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 import org.springframework.lang.Nullable;
-import ru.spbstu.hsisct.stockmarket.enums.OrderOperationType;
-import ru.spbstu.hsisct.stockmarket.enums.OrderStatus;
+import ru.spbstu.hsisct.stockmarket.model.enums.OrderOperationType;
+import ru.spbstu.hsisct.stockmarket.model.enums.OrderStatus;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
