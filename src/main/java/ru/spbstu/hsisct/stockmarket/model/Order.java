@@ -19,15 +19,16 @@ import javax.persistence.Id;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 import java.math.BigDecimal;
+import java.time.LocalDateTime;
 import java.util.Objects;
 
 @Data
-@Entity
+@Entity //TODO Think of immutability in this class (jdbc does provide some)
 @Table(name = "order")
 @NoArgsConstructor
 @AllArgsConstructor
 @RequiredArgsConstructor
-public abstract class Order {
+public class Order {
 
     @Id
     @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "order_gen")
@@ -43,11 +44,18 @@ public abstract class Order {
     @Enumerated(EnumType.STRING)
     private OrderOperationType operationType;
     @NonNull
-    @Enumerated(EnumType.STRING)
     private OrderStatus orderStatus;
     @NonNull
     @Column(name = "public")
     private boolean isPublic;
+    @NonNull
+    private LocalDateTime timestamp;
+    @Nullable
+    private Long parentId;
+
+    public Order withId(final Long id) {
+        return new Order(id, this.size, this.minPrice, this.maxPrice, this.operationType, this.orderStatus, this.isPublic, this.timestamp, this.parentId);
+    }
 
     public boolean isLimitedOrder() {
         return Objects.nonNull(minPrice) && Objects.nonNull(maxPrice);

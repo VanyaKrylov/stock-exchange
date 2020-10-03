@@ -33,7 +33,7 @@ public class Company {
     private BigDecimal capital;
 
     @PrePersist
-    public void onCreate() {
+    private void onCreate() {
         bankAccountId = UUID.randomUUID();
     }
 }

@@ -41,7 +41,7 @@ public class Individual {
     private BigDecimal capital;
 
     @PrePersist
-    public void onCreate() {
+    private void onCreate() {
         bankAccountId = UUID.randomUUID();
     }
 }
