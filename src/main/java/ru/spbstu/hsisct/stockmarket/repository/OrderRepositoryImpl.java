@@ -8,6 +8,7 @@ import ru.spbstu.hsisct.stockmarket.model.Broker;
 import ru.spbstu.hsisct.stockmarket.model.Company;
 import ru.spbstu.hsisct.stockmarket.model.Individual;
 import ru.spbstu.hsisct.stockmarket.model.Order;
+import ru.spbstu.hsisct.stockmarket.model.enums.OrderStatus;
 
 import java.sql.PreparedStatement;
 import java.util.Objects;
@@ -27,9 +28,21 @@ public class OrderRepositoryImpl implements OrderRepository {
         assert company_id >= 0;
         assert individual_id >= 0;
 
+        if (Objects.nonNull(order.getId())) {
+            jdbcTemplate.update(con -> {
+                PreparedStatement statement = con.prepareStatement("""
+                    UPDATE "order" SET order_status = $1 WHERE id = $2
+                """);
+                statement.setString(1, OrderStatus.CLOSED.name());
+                statement.setLong(2, order.getId());
+
+                return statement;
+            });
+        }
+
         final int id = jdbcTemplate.update(con -> { //TODO replace with .query()
             PreparedStatement statement = con.prepareStatement(""" 
-                INSERT INTO "ORDER" (broker_id, company_id, individual_id, size, min_price, max_price, operation_type, timestamp, parent_id) 
+                INSERT INTO "order" (broker_id, company_id, individual_id, size, min_price, max_price, operation_type, order_status, timestamp, parent_id) 
                 VALUES(?, ?, ?, ?, ?, ?, ?, ?, ?); 
             """);
             statement.setLong(1, broker_id);
