@@ -15,6 +15,7 @@ import java.sql.SQLException;
 import java.sql.Statement;
 import java.time.LocalDateTime;
 import java.util.Objects;
+import java.util.Optional;
 
 @Repository
 @RequiredArgsConstructor
@@ -71,9 +72,9 @@ public class OrderRepositoryImpl implements OrderRepository {
     }
 
     @Override
-    public Order findById(final long id) {
+    public Optional<Order> findById(final long id) {
 
-        return Objects.requireNonNull(jdbcTemplate.query(con -> {
+        return Optional.ofNullable(jdbcTemplate.query(con -> {
                     PreparedStatement statement = con.prepareStatement("""
                                 SELECT * FROM "order" WHERE ID = ?;
                             """);

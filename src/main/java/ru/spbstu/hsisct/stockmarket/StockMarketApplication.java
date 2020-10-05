@@ -59,49 +59,18 @@ public class StockMarketApplication {
             var company = testSaveCompany();
             var order = addOrder(broker.getId(), company.getId(), indiv.getId());
             log.info(order.toString());
+            var stock = addStock();
 
-            /*testStock();
-            testCompany();*/
-//            for (int i = 0; i < 1; i++) {
-//                paymentService.send(i + ": Hello again, Atomikos! Testing Tx 2");
-//                paymentService.publish("Hi!");
-//            }
-//            Company company = new Company();
-//            company.setCapital(BigDecimal.valueOf(1234.56));
-//            companyRepository.save(company);
-//            FinancialReport financialReport = new FinancialReport();
-//            financialReport.setCapital(BigDecimal.valueOf(123.45));
-//            financialReport.setCompany(companyRepository.findById(1L).get());
-//            financialReport.setEarnings(BigDecimal.valueOf(12));
-//            financialReport.setExpenses(BigDecimal.valueOf(43));
-//            financialReportRepository.save(financialReport);
-//            companyRepository.findById(1L).get().getFinancialReports().forEach(System.out::println);
-
-//            Company company = companyRepository.findById(1L).get();
-//            FinancialReport financialReport = new FinancialReport();
-//            financialReport.setCapital(BigDecimal.valueOf(7.77));
-//            financialReport.setCompany(company);
-//            financialReport.setEarnings(BigDecimal.valueOf(77));
-//            financialReport.setExpenses(BigDecimal.valueOf(77));
-//            company.getFinancialReports().add(financialReport);
-//            companyRepository.save(company);
-//            Broker broker = new Broker();
-//            broker.setBalance(BigDecimal.valueOf(9.9));
-//            broker.setFee(BigDecimal.valueOf(98.76));
-//            investorRepository.save(broker);
-//            Individual individual = new Individual();
-//            individual.setBalance(BigDecimal.valueOf(0.1));
-//            individual.setBroker((Broker) investorRepository.findById(1L).get());
-//            investorRepository.save(individual);
-//            investorRepository.findAll().forEach(System.out::println);
-            //testService.viewAllInvestors();
+            individualRepository.addStock(indiv.getId(), stock.getId());
         };
     }
 
-    private void testStock() {
+    private Stock addStock() {
         var company = companyRepository.findAll().iterator().next();
         var stock = stockRepository.save(new Stock(StockType.COMMON, company));
         log.info(String.valueOf(stockRepository.findById(stock.getId()).orElse(stock)));
+
+        return stock;
     }
 
     private void testCompany() {

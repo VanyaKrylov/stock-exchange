@@ -5,6 +5,8 @@ import lombok.NoArgsConstructor;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 import org.springframework.lang.Nullable;
+import ru.spbstu.hsisct.stockmarket.model.enums.StockType;
+import ru.spbstu.hsisct.stockmarket.repository.StockRepository;
 
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
@@ -14,7 +16,11 @@ import javax.persistence.PrePersist;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 import java.math.BigDecimal;
+import java.util.ArrayList;
+import java.util.Objects;
 import java.util.UUID;
+import java.util.stream.Collectors;
+import java.util.stream.LongStream;
 
 @Data
 @Entity
@@ -35,5 +41,15 @@ public class Company {
     @PrePersist
     private void onCreate() {
         bankAccountId = UUID.randomUUID();
+    }
+
+    public void publishStocks(final long amount, StockType stockType, final StockRepository stockRepository) {
+        assert Objects.nonNull(id);
+
+        final var stocks = new ArrayList<Stock>();
+        for (int i = 0; i < amount; i++) {
+            stocks.add(new Stock(stockType, this));
+        }
+        stockRepository.saveAll(stocks);
     }
 }

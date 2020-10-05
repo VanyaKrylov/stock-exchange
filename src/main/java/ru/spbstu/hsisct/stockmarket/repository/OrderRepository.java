@@ -2,6 +2,8 @@ package ru.spbstu.hsisct.stockmarket.repository;
 
 import ru.spbstu.hsisct.stockmarket.model.Order;
 
+import java.util.Optional;
+
 public interface OrderRepository {
 
     Order save(Order order,
@@ -9,5 +11,5 @@ public interface OrderRepository {
                long company,
                long individual);
 
-    Order findById(long id);
+    Optional<Order> findById(long id);
 }

@@ -6,6 +6,7 @@ import lombok.RequiredArgsConstructor;
 import org.hibernate.annotations.Immutable;
 import lombok.NonNull;
 import org.springframework.lang.Nullable;
+import ru.spbstu.hsisct.stockmarket.repository.StockRepository;
 
 import javax.persistence.CascadeType;
 import javax.persistence.Entity;
@@ -19,6 +20,7 @@ import javax.persistence.PrePersist;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 import java.math.BigDecimal;
+import java.util.List;
 import java.util.UUID;
 
 @Data
@@ -44,5 +46,13 @@ public class Individual {
     @PrePersist
     private void onCreate() {
         bankAccountId = UUID.randomUUID();
+    }
+
+    public void addMoney(final BigDecimal money) {
+        capital = capital.add(money);
+    }
+
+    public List<Stock> viewMarketStocks(final StockRepository stockRepository) {
+        return stockRepository.getAllUniqueStocks();
     }
 }
