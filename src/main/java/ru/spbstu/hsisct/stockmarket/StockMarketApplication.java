@@ -140,11 +140,14 @@ public class StockMarketApplication {
                 .size(1L)
                 .operationType(OrderOperationType.BUY)
                 .orderStatus(OrderStatus.ACTIVE)
+                .minPrice(BigDecimal.valueOf(40L))
+                .maxPrice(BigDecimal.valueOf(60L))
                 .isPublic(false)
                 .timestamp(LocalDateTime.now())
                 .parentId(2L)
                 .build();
         var resOrder = orderRepository.save(order, brokerId, companyId, indivId);
+        var updatedOrder = orderRepository.save(resOrder, brokerId, companyId, indivId);
 
         return resOrder;
     }
