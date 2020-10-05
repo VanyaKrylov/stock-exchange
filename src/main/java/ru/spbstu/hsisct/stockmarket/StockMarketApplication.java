@@ -9,15 +9,22 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.jms.annotation.EnableJms;
 import org.springframework.transaction.annotation.EnableTransactionManagement;
 import org.springframework.transaction.annotation.Transactional;
+import ru.spbstu.hsisct.stockmarket.model.Broker;
+import ru.spbstu.hsisct.stockmarket.model.Individual;
+import ru.spbstu.hsisct.stockmarket.model.Order;
+import ru.spbstu.hsisct.stockmarket.model.enums.OrderOperationType;
+import ru.spbstu.hsisct.stockmarket.model.enums.OrderStatus;
 import ru.spbstu.hsisct.stockmarket.model.enums.StockType;
 import ru.spbstu.hsisct.stockmarket.model.Company;
 import ru.spbstu.hsisct.stockmarket.model.Stock;
 import ru.spbstu.hsisct.stockmarket.repository.BrokerRepository;
 import ru.spbstu.hsisct.stockmarket.repository.CompanyRepository;
 import ru.spbstu.hsisct.stockmarket.repository.IndividualRepository;
+import ru.spbstu.hsisct.stockmarket.repository.OrderRepository;
 import ru.spbstu.hsisct.stockmarket.repository.StockRepository;
 
 import java.math.BigDecimal;
+import java.time.LocalDateTime;
 import java.util.List;
 
 @Slf4j
@@ -40,14 +47,21 @@ public class StockMarketApplication {
     private final CompanyRepository companyRepository;
     private final StockRepository stockRepository;
     private final IndividualRepository individualRepository;
+    private final OrderRepository orderRepository;
 
 
     @Bean
     @Transactional
     public CommandLineRunner commandLineRunner() {
         return args -> {
-            testStock();
-            testCompany();
+            var broker = addBroker();
+            var indiv = addIndividual(broker);
+            var company = testSaveCompany();
+            var order = addOrder(broker.getId(), company.getId(), indiv.getId());
+            log.info(order.toString());
+
+            /*testStock();
+            testCompany();*/
 //            for (int i = 0; i < 1; i++) {
 //                paymentService.send(i + ": Hello again, Atomikos! Testing Tx 2");
 //                paymentService.publish("Hi!");
@@ -111,5 +125,23 @@ public class StockMarketApplication {
 
     public void testDeleteCompany(Company company) {
         companyRepository.delete(company);
+    }
+
+    private Broker addBroker() {
+        return brokerRepository.save(new Broker(BigDecimal.valueOf(123), BigDecimal.valueOf(321)));
+    }
+
+    private Individual addIndividual(final Broker broker) {
+        return individualRepository.save(new Individual(broker, BigDecimal.valueOf(98)));
+    }
+
+    private Order addOrder(long brokerId, long companyId, long indivId) {
+        var order = Order.builder()
+                .size(1L)
+                .operationType(OrderOperationType.BUY)
+                .orderStatus(OrderStatus.ACTIVE)
+                .isPublic(false)
+                .timestamp(LocalDateTime.now()).build();
+        return orderRepository.save(order, brokerId, companyId, indivId);
     }
 }

@@ -1,10 +1,12 @@
 package ru.spbstu.hsisct.stockmarket.model;
 
 import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
+import lombok.ToString;
 import org.springframework.lang.Nullable;
 import ru.spbstu.hsisct.stockmarket.model.enums.OrderOperationType;
 import ru.spbstu.hsisct.stockmarket.model.enums.OrderStatus;
@@ -25,6 +27,7 @@ import java.util.Objects;
 @Data
 @Entity //TODO Think of immutability in this class (jdbc does provide some)
 @Table(name = "order")
+@Builder
 @NoArgsConstructor
 @AllArgsConstructor
 @RequiredArgsConstructor
@@ -37,8 +40,10 @@ public class Order {
     @NonNull
     private Long size;
     @Nullable
+    @ToString.Exclude
     private BigDecimal minPrice;
     @Nullable
+    @ToString.Exclude
     private BigDecimal maxPrice;
     @NonNull
     @Enumerated(EnumType.STRING)
