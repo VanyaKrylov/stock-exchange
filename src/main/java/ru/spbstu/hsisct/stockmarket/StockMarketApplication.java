@@ -141,7 +141,11 @@ public class StockMarketApplication {
                 .operationType(OrderOperationType.BUY)
                 .orderStatus(OrderStatus.ACTIVE)
                 .isPublic(false)
-                .timestamp(LocalDateTime.now()).build();
-        return orderRepository.save(order, brokerId, companyId, indivId);
+                .timestamp(LocalDateTime.now())
+                .parentId(2L)
+                .build();
+        var resOrder = orderRepository.save(order, brokerId, companyId, indivId);
+
+        return resOrder;
     }
 }
