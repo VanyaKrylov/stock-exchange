@@ -57,6 +57,7 @@ public class OrderRepositoryImpl implements OrderRepository {
                 }, keyHolder);
 
         final long id = (long) Objects.requireNonNull(keyHolder.getKeys()).get("id");
+
         return Objects.requireNonNull(jdbcTemplate.query(
                 con -> {
                     PreparedStatement statement = con.prepareStatement("""
@@ -70,8 +71,17 @@ public class OrderRepositoryImpl implements OrderRepository {
     }
 
     @Override
-    public Order findById(long id) {
-        return null;
+    public Order findById(final long id) {
+
+        return Objects.requireNonNull(jdbcTemplate.query(con -> {
+                    PreparedStatement statement = con.prepareStatement("""
+                                SELECT * FROM "order" WHERE ID = ?;
+                            """);
+                    statement.setLong(1, id);
+
+                    return statement;
+                }, OrderRepositoryImpl::constructOrderFromResultSet)
+        );
     }
 
     private static void injectOrderFieldsIntoStatement(final Order order,
