@@ -57,7 +57,8 @@ public class StockMarketApplication {
             var broker = addBroker();
             var indiv = addIndividual(broker);
             var company = testSaveCompany();
-            var order = addOrder(broker.getId(), company.getId(), indiv.getId());
+//            var order = addOrder(broker.getId(), company.getId(), indiv.getId());
+            var order = addOrder(null, company.getId(), null);
             log.info(order.toString());
             var stock = addStock();
 
@@ -106,7 +107,7 @@ public class StockMarketApplication {
         return individualRepository.save(new Individual(broker, BigDecimal.valueOf(98)));
     }
 
-    private Order addOrder(long brokerId, long companyId, long indivId) {
+    private Order addOrder(Long brokerId, long companyId, Long indivId) {
         var order = Order.builder()
                 .size(1L)
                 .operationType(OrderOperationType.BUY)
@@ -115,7 +116,6 @@ public class StockMarketApplication {
                 .maxPrice(BigDecimal.valueOf(60L))
                 .isPublic(false)
                 .timestamp(LocalDateTime.now())
-                .parentId(2L)
                 .build();
         var resOrder = orderRepository.save(order, brokerId, companyId, indivId);
         var updatedOrder = orderRepository.save(resOrder, brokerId, companyId, indivId);

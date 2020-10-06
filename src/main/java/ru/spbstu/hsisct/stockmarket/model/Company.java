@@ -5,7 +5,10 @@ import lombok.NoArgsConstructor;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 import org.springframework.lang.Nullable;
+import ru.spbstu.hsisct.stockmarket.model.enums.OrderOperationType;
+import ru.spbstu.hsisct.stockmarket.model.enums.OrderStatus;
 import ru.spbstu.hsisct.stockmarket.model.enums.StockType;
+import ru.spbstu.hsisct.stockmarket.repository.OrderRepository;
 import ru.spbstu.hsisct.stockmarket.repository.StockRepository;
 
 import javax.persistence.Entity;
@@ -16,11 +19,14 @@ import javax.persistence.PrePersist;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 import java.math.BigDecimal;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Objects;
 import java.util.UUID;
 import java.util.stream.Collectors;
 import java.util.stream.LongStream;
+
+import static ru.spbstu.hsisct.stockmarket.model.enums.OrderOperationType.SELL;
 
 @Data
 @Entity
@@ -43,15 +49,18 @@ public class Company {
         bankAccountId = UUID.randomUUID();
     }
 
-    public void publishCommonStocks(final long amount, final StockRepository stockRepository) {
-        publishStocks(amount, StockType.COMMON, stockRepository);
+    public void publishCommonStocks(final long amount, final StockRepository stockRepository, final OrderRepository orderRepository) {
+        publishStocks(amount, StockType.COMMON, stockRepository, orderRepository);
     }
 
-    public void publishPreferredStocks(final long amount, final StockRepository stockRepository) {
-        publishStocks(amount, StockType.PREFERRED, stockRepository);
+    public void publishPreferredStocks(final long amount, final StockRepository stockRepository, final OrderRepository orderRepository) {
+        publishStocks(amount, StockType.PREFERRED, stockRepository, orderRepository);
     }
 
-    private void publishStocks(final long amount, StockType stockType, final StockRepository stockRepository) {
+    private void publishStocks(final long amount,
+                               StockType stockType,
+                               final StockRepository stockRepository,
+                               final OrderRepository orderRepository) {
         assert Objects.nonNull(id);
 
         final var stocks = new ArrayList<Stock>();
@@ -59,5 +68,17 @@ public class Company {
             stocks.add(new Stock(stockType, this));
         }
         stockRepository.saveAll(stocks);
+        var order = constructOrder(amount);
+        orderRepository.save(order, null, this.id, null);
+    }
+
+    private Order constructOrder(final long amount) {
+        return Order.builder()
+                .size(amount)
+                .orderStatus(OrderStatus.ACTIVE)
+                .timestamp(LocalDateTime.now())
+                .isPublic(true)
+                .operationType(SELL)
+                .build();
     }
 }

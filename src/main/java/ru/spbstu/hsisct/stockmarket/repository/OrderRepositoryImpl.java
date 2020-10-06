@@ -25,7 +25,7 @@ public class OrderRepositoryImpl implements OrderRepository {
     private final JdbcTemplate jdbcTemplate;
 
     @Override
-    public Order save(final Order order, @Nullable final Long brokerId, final Long companyId, @Nullable final Long individualId) {
+    public Order save(final Order order, final Long brokerId, final Long companyId, final Long individualId) {
         final KeyHolder keyHolder = new GeneratedKeyHolder();
         if (Objects.nonNull(order.getId())) {
             closeOrder(order.getId());
@@ -101,11 +101,11 @@ public class OrderRepositoryImpl implements OrderRepository {
         statement.setObject(10, order.getParentId());
     }
 
+    @SuppressWarnings("ConstantConditions")
     private static Order constructOrderFromResultSet(final ResultSet rs) throws SQLException {
         if (!rs.next()) {
             throw new RuntimeException("TODO"); //TODO implement
         }
-
         return Order.builder()
                 .id(rs.getLong("id"))
                 .size(rs.getLong("size"))
@@ -115,7 +115,7 @@ public class OrderRepositoryImpl implements OrderRepository {
                 .orderStatus(OrderStatus.valueOf(rs.getString("order_status")))
                 .isPublic(rs.getBoolean("public"))
                 .timestamp(rs.getObject("timestamp", LocalDateTime.class))
-                .parentId(rs.getLong("parent_id"))
+                .parentId(rs.getLong("parent_id") != 0 ? rs.getLong("parent_id") : null)
                 .build();
     }
 
