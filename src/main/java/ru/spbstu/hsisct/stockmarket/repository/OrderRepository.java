@@ -7,9 +7,9 @@ import java.util.Optional;
 public interface OrderRepository {
 
     Order save(Order order,
-               long broker,
-               long company,
-               long individual);
+               Long broker,
+               Long company,
+               Long individual);
 
     Optional<Order> findById(long id);
 }

@@ -4,6 +4,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.support.GeneratedKeyHolder;
 import org.springframework.jdbc.support.KeyHolder;
+import org.springframework.lang.Nullable;
 import org.springframework.stereotype.Repository;
 import ru.spbstu.hsisct.stockmarket.model.Order;
 import ru.spbstu.hsisct.stockmarket.model.enums.OrderOperationType;
@@ -24,51 +25,23 @@ public class OrderRepositoryImpl implements OrderRepository {
     private final JdbcTemplate jdbcTemplate;
 
     @Override
-    public Order save(final Order order,
-                      final long broker_id,
-                      final long company_id,
-                      final long individual_id) {
-        assert broker_id >= 0;
-        assert company_id >= 0;
-        assert individual_id >= 0;
-
+    public Order save(final Order order, @Nullable final Long brokerId, final Long companyId, @Nullable final Long individualId) {
         final KeyHolder keyHolder = new GeneratedKeyHolder();
         if (Objects.nonNull(order.getId())) {
-            jdbcTemplate.update(
-                    con -> {
-                        PreparedStatement statement = con.prepareStatement("""
-                            UPDATE "order" SET order_status = ? WHERE id = ?
-                        """);
-                        statement.setString(1, OrderStatus.CLOSED.name());
-                        statement.setLong(2, order.getId());
-
-                        return statement;
-                    });
+            closeOrder(order.getId());
         }
+        jdbcTemplate.update(con -> {
+                PreparedStatement statement = con.prepareStatement(""" 
+                    INSERT INTO "order" (broker_id, company_id, individual_id, size, min_price, max_price, operation_type, order_status, timestamp, parent_id) 
+                    VALUES(?, ?, ?, ?, ?, ?, ?, ?, ?, ?); 
+                """, Statement.RETURN_GENERATED_KEYS);
+                injectOrderFieldsIntoStatement(order, brokerId, companyId, individualId, statement);
 
-        jdbcTemplate.update(
-                con -> {
-                    PreparedStatement statement = con.prepareStatement(""" 
-                        INSERT INTO "order" (broker_id, company_id, individual_id, size, min_price, max_price, operation_type, order_status, timestamp, parent_id) 
-                        VALUES(?, ?, ?, ?, ?, ?, ?, ?, ?, ?); 
-                    """, Statement.RETURN_GENERATED_KEYS);
-                    injectOrderFieldsIntoStatement(order, broker_id, company_id, individual_id, statement);
-
-                    return statement;
-                }, keyHolder);
-
+                return statement;
+            }, keyHolder);
         final long id = (long) Objects.requireNonNull(keyHolder.getKeys()).get("id");
 
-        return Objects.requireNonNull(jdbcTemplate.query(
-                con -> {
-                    PreparedStatement statement = con.prepareStatement("""
-                                SELECT * FROM "order" WHERE id = ?;
-                            """);
-                    statement.setLong(1, id);
-
-                    return statement;
-                }, OrderRepositoryImpl::constructOrderFromResultSet)
-        );
+        return getInsertedOrderById(id);
     }
 
     @Override
@@ -76,8 +49,8 @@ public class OrderRepositoryImpl implements OrderRepository {
 
         return Optional.ofNullable(jdbcTemplate.query(con -> {
                     PreparedStatement statement = con.prepareStatement("""
-                                SELECT * FROM "order" WHERE ID = ?;
-                            """);
+                        SELECT * FROM "order" WHERE ID = ?;
+                    """);
                     statement.setLong(1, id);
 
                     return statement;
@@ -85,14 +58,40 @@ public class OrderRepositoryImpl implements OrderRepository {
         );
     }
 
+    private Order getInsertedOrderById(final long id) {
+        return Objects.requireNonNull(jdbcTemplate.query(
+                con -> {
+                    PreparedStatement statement = con.prepareStatement("""
+                        SELECT * FROM "order" WHERE id = ?;
+                    """);
+                    statement.setLong(1, id);
+
+                    return statement;
+                }, OrderRepositoryImpl::constructOrderFromResultSet)
+        );
+    }
+
+    private void closeOrder(final long id) {
+        jdbcTemplate.update(
+                con -> {
+                    PreparedStatement statement = con.prepareStatement("""
+                        UPDATE "order" SET order_status = ? WHERE id = ?
+                    """);
+                    statement.setString(1, OrderStatus.CLOSED.name());
+                    statement.setLong(2, id);
+
+                    return statement;
+                });
+    }
+
     private static void injectOrderFieldsIntoStatement(final Order order,
-                                                       final long broker_id,
-                                                       final long company_id,
-                                                       final long individual_id,
+                                                       @Nullable final Long brokerId,
+                                                       final long companyId,
+                                                       @Nullable final Long individualId,
                                                        final PreparedStatement statement) throws SQLException {
-        statement.setLong(1, broker_id);
-        statement.setLong(2, company_id);
-        statement.setLong(3, individual_id);
+        statement.setObject(1, brokerId);
+        statement.setObject(2, companyId);
+        statement.setObject(3, individualId);
         statement.setLong(4, order.getSize());
         statement.setObject(5, order.isLimitedOrder() ? order.getMinPrice() : null);
         statement.setObject(6, order.isLimitedOrder() ? order.getMaxPrice() : null);

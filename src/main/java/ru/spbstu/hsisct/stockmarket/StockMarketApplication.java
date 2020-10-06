@@ -54,14 +54,14 @@ public class StockMarketApplication {
     @Transactional
     public CommandLineRunner commandLineRunner() {
         return args -> {
-            /*var broker = addBroker();
+            var broker = addBroker();
             var indiv = addIndividual(broker);
             var company = testSaveCompany();
             var order = addOrder(broker.getId(), company.getId(), indiv.getId());
             log.info(order.toString());
             var stock = addStock();
 
-            individualRepository.addStock(indiv.getId(), stock.getId());*/
+            individualRepository.addStock(indiv.getId(), stock.getId());
             //log.info(stockRepository.getAllUniqueStocks().toString());
             log.info(stockRepository.getAllIndividualsStocks(24).toString());
         };

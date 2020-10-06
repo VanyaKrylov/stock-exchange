@@ -43,7 +43,15 @@ public class Company {
         bankAccountId = UUID.randomUUID();
     }
 
-    public void publishStocks(final long amount, StockType stockType, final StockRepository stockRepository) {
+    public void publishCommonStocks(final long amount, final StockRepository stockRepository) {
+        publishStocks(amount, StockType.COMMON, stockRepository);
+    }
+
+    public void publishPreferredStocks(final long amount, final StockRepository stockRepository) {
+        publishStocks(amount, StockType.PREFERRED, stockRepository);
+    }
+
+    private void publishStocks(final long amount, StockType stockType, final StockRepository stockRepository) {
         assert Objects.nonNull(id);
 
         final var stocks = new ArrayList<Stock>();

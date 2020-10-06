@@ -92,9 +92,9 @@ public class Individual {
         orderRepository.save(order, this.broker.getId(), companyId, this.id);
     }
 
-/*    public List<Stock> getAllOwnedStocks() {
-
-    }*/
+    public List<Stock> getAllOwnedStocks(final StockRepository stockRepository) {
+        return stockRepository.getAllIndividualsStocks(this.id);
+    }
 
     private Order constructOrder(final long amount, final OrderOperationType operationType) {
         return Order.builder()

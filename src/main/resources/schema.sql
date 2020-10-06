@@ -160,9 +160,9 @@ CREATE TABLE IF NOT EXISTS INDIVIDUAL (
 
 CREATE TABLE IF NOT EXISTS "order" (
     "id" bigserial PRIMARY KEY NOT NULL,
-    "broker_id" bigint NOT NULL,
+    "broker_id" bigint,
     "company_id" bigint NOT NULL,
-    "individual_id" bigint NOT NULL,
+    "individual_id" bigint,
     "size" bigint NOT NULL,
     "min_price" numeric(16,2),
     "max_price" numeric(16,2),
