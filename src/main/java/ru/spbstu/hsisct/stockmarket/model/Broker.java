@@ -47,4 +47,10 @@ public class Broker {
 
         return orderRepository.findClientsOrdersForBroker(this.id);
     }
+
+    public List<Order> getSelfOrders(final OrderRepository orderRepository) {
+        assert Objects.nonNull(id);
+
+        return orderRepository.findOrdersForBroker(this.id);
+    }
 }
