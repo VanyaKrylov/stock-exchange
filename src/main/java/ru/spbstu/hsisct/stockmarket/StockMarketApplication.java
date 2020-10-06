@@ -57,14 +57,16 @@ public class StockMarketApplication {
             var broker = addBroker();
             var indiv = addIndividual(broker);
             var company = testSaveCompany();
-//            var order = addOrder(broker.getId(), company.getId(), indiv.getId());
-            var order = addOrder(null, company.getId(), null);
+            var order = addOrder(broker.getId(), company.getId(), indiv.getId());
+//            var order = addOrder(null, company.getId(), null);
             log.info(order.toString());
             var stock = addStock();
 
             individualRepository.addStock(indiv.getId(), stock.getId());
             //log.info(stockRepository.getAllUniqueStocks().toString());
             log.info(stockRepository.getAllIndividualsStocks(24).toString());
+            log.info(orderRepository.findClientsOrdersForBroker(31L).toString());
+
         };
     }
 

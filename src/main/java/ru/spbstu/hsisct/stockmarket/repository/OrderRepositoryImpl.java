@@ -15,6 +15,8 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
 
@@ -56,6 +58,18 @@ public class OrderRepositoryImpl implements OrderRepository {
                     return statement;
                 }, OrderRepositoryImpl::constructOrderFromResultSet)
         );
+    }
+
+    @Override
+    public List<Order> findClientsOrdersForBroker(final long brokerId) {
+        return Objects.requireNonNull(jdbcTemplate.query(con -> {
+            PreparedStatement statement = con.prepareStatement("""
+                        SELECT * FROM "order" WHERE broker_id = ? AND individual_id IS NOT NULL AND order_status = 'ACTIVE';
+                    """);
+            statement.setLong(1, brokerId);
+
+            return statement;
+        }, OrderRepositoryImpl::constructOrderListFromResultSet));
     }
 
     private Order getInsertedOrderById(final long id) {
@@ -101,11 +115,15 @@ public class OrderRepositoryImpl implements OrderRepository {
         statement.setObject(10, order.getParentId());
     }
 
-    @SuppressWarnings("ConstantConditions")
     private static Order constructOrderFromResultSet(final ResultSet rs) throws SQLException {
         if (!rs.next()) {
             throw new RuntimeException("TODO"); //TODO implement
         }
+
+        return parseResultListIntoOrder(rs);
+    }
+
+    private static Order parseResultListIntoOrder(final ResultSet rs) throws SQLException {
         return Order.builder()
                 .id(rs.getLong("id"))
                 .size(rs.getLong("size"))
@@ -117,6 +135,15 @@ public class OrderRepositoryImpl implements OrderRepository {
                 .timestamp(rs.getObject("timestamp", LocalDateTime.class))
                 .parentId(rs.getLong("parent_id") != 0 ? rs.getLong("parent_id") : null)
                 .build();
+    }
+
+    private static List<Order> constructOrderListFromResultSet(final ResultSet rs) throws SQLException {
+        var result = new ArrayList<Order>();
+        while (rs.next()) {
+            result.add(parseResultListIntoOrder(rs));
+        }
+
+        return result;
     }
 
 }

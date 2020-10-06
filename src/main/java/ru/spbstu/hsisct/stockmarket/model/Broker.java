@@ -5,6 +5,7 @@ import lombok.NoArgsConstructor;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 import org.springframework.lang.Nullable;
+import ru.spbstu.hsisct.stockmarket.repository.OrderRepository;
 
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
@@ -14,6 +15,8 @@ import javax.persistence.PrePersist;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 import java.math.BigDecimal;
+import java.util.List;
+import java.util.Objects;
 import java.util.UUID;
 
 @Data
@@ -37,5 +40,11 @@ public class Broker {
     @PrePersist
     private void onCreate() {
         bankAccountId = UUID.randomUUID();
+    }
+
+    public List<Order> getClientsOrders(final OrderRepository orderRepository) {
+        assert Objects.nonNull(id);
+
+        return orderRepository.findClientsOrdersForBroker(this.id);
     }
 }

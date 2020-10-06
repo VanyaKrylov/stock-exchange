@@ -49,15 +49,26 @@ public class Company {
         bankAccountId = UUID.randomUUID();
     }
 
-    public void publishCommonStocks(final long amount, final StockRepository stockRepository, final OrderRepository orderRepository) {
-        publishStocks(amount, StockType.COMMON, stockRepository, orderRepository);
+    public void publishCommonStocks(final long amount,
+                                    final BigDecimal price,
+                                    final StockRepository stockRepository,
+                                    final OrderRepository orderRepository) {
+        publishStocks(amount, price, StockType.COMMON, stockRepository, orderRepository);
     }
 
-    public void publishPreferredStocks(final long amount, final StockRepository stockRepository, final OrderRepository orderRepository) {
-        publishStocks(amount, StockType.PREFERRED, stockRepository, orderRepository);
+    public void publishPreferredStocks(final long amount,
+                                       final BigDecimal price,
+                                       final StockRepository stockRepository,
+                                       final OrderRepository orderRepository) {
+        publishStocks(amount, price, StockType.PREFERRED, stockRepository, orderRepository);
     }
+
+    /*public long countStocks(final StockRepository stockRepository) {
+        stockRepository
+    }*/
 
     private void publishStocks(final long amount,
+                               final BigDecimal price,
                                StockType stockType,
                                final StockRepository stockRepository,
                                final OrderRepository orderRepository) {
@@ -68,13 +79,15 @@ public class Company {
             stocks.add(new Stock(stockType, this));
         }
         stockRepository.saveAll(stocks);
-        var order = constructOrder(amount);
+        var order = constructOrder(amount, price);
         orderRepository.save(order, null, this.id, null);
     }
 
-    private Order constructOrder(final long amount) {
+    private Order constructOrder(final long amount, final BigDecimal price) {
         return Order.builder()
                 .size(amount)
+                .minPrice(price)
+                .maxPrice(price)
                 .orderStatus(OrderStatus.ACTIVE)
                 .timestamp(LocalDateTime.now())
                 .isPublic(true)

@@ -21,4 +21,6 @@ public interface StockRepository extends CrudRepository<Stock, Long> {
         SELECT * FROM stock where id IN (SELECT stock_id FROM individuals_stocks WHERE individual_id = :indivId)
     """, nativeQuery = true)
     List<Stock> getAllIndividualsStocks(@Param("indivId") final long indivId);
+
+    Long countStockByCompanyId(final Long companyId);
 }
