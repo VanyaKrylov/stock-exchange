@@ -7,7 +7,6 @@ import ru.spbstu.hsisct.stockmarket.dto.OrderInfoDto;
 import ru.spbstu.hsisct.stockmarket.dto.StockDto;
 import ru.spbstu.hsisct.stockmarket.model.Individual;
 import ru.spbstu.hsisct.stockmarket.model.Order;
-import ru.spbstu.hsisct.stockmarket.model.Stock;
 import ru.spbstu.hsisct.stockmarket.repository.CompanyRepository;
 import ru.spbstu.hsisct.stockmarket.repository.IndividualRepository;
 import ru.spbstu.hsisct.stockmarket.repository.OrderRepository;
@@ -42,12 +41,20 @@ public class IndividualFacade {
     }
 
     public void createSellOrder(final long individualId, final OrderDto orderDto) {
+        if (!validateSufficiencyForSellOrder(individualId, orderDto.getId(), orderDto.getSize())) {
+            throw new IllegalArgumentException("Sell order can't be larger that stocks held");
+        }
+
         var individual = individualRepository.findById(individualId).orElseThrow();
         if (orderDto.isLimitedOrder()) {
             individual.createLimitedSellOrder(orderDto.getId(), orderDto.getSize(), orderDto.getMinPrice(), orderDto.getMaxPrice(), orderRepository);
         } else {
             individual.createSellOrder(orderDto.getId(), orderDto.getSize(), orderRepository);
         }
+    }
+
+    private boolean validateSufficiencyForSellOrder(final long individualId, final long companyId, final long size) {
+        return stockRepository.countIndividualsStocksOfCompany(individualId, companyId).compareTo(size) >= 0;
     }
 
     public List<OrderInfoDto> getOwnedOrders(final long individualId) {

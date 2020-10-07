@@ -75,7 +75,11 @@ public class IndividualController {
 
     @PostMapping(value = "lk/{userId}/create-order", consumes = "application/x-www-form-urlencoded", params = "sell")
     public String createSellOrder(@PathVariable("userId") @NonNull Long userId, OrderDto orderDto) {
-        individualFacade.createSellOrder(userId, orderDto);
+        try {
+            individualFacade.createSellOrder(userId, orderDto);
+        } catch (Exception e) {
+            log.error(e.getMessage());
+        }
         return "redirect:/user/lk/" + userId;
     }
 
