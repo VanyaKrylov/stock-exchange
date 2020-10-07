@@ -2,9 +2,8 @@ package ru.spbstu.hsisct.stockmarket.model;
 
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import lombok.RequiredArgsConstructor;
-import org.hibernate.annotations.Immutable;
 import lombok.NonNull;
+import lombok.RequiredArgsConstructor;
 import org.springframework.lang.Nullable;
 import ru.spbstu.hsisct.stockmarket.model.enums.OrderOperationType;
 import ru.spbstu.hsisct.stockmarket.model.enums.OrderStatus;
@@ -17,7 +16,6 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
-import javax.persistence.ManyToOne;
 import javax.persistence.OneToOne;
 import javax.persistence.PrePersist;
 import javax.persistence.SequenceGenerator;
@@ -61,8 +59,8 @@ public class Individual {
     }
 
     public void createBuyOrder(final long companyId, final long amount, final OrderRepository orderRepository) {
-        var order = constructOrder(amount, OrderOperationType.BUY);
-        orderRepository.save(order, this.broker.getId(), companyId, this.id);
+        var order = constructOrder(amount, companyId, OrderOperationType.BUY);
+        orderRepository.save(order);
     }
 
     public void createLimitedBuyOrder(final long companyId,
@@ -70,15 +68,15 @@ public class Individual {
                                       final BigDecimal minPrice,
                                       final BigDecimal maxPrice,
                                       final OrderRepository orderRepository) {
-        var order = constructOrder(amount, OrderOperationType.BUY);
+        var order = constructOrder(amount, companyId, OrderOperationType.BUY);
         order.setMinPrice(minPrice);
         order.setMaxPrice(maxPrice);
-        orderRepository.save(order, this.broker.getId(), companyId, this.id);
+        orderRepository.save(order);
     }
 
     public void createSellOrder(final long companyId, final long amount, final OrderRepository orderRepository) {
-        var order = constructOrder(amount, OrderOperationType.SELL);
-        orderRepository.save(order, this.broker.getId(), companyId, this.id);
+        var order = constructOrder(amount, companyId, OrderOperationType.SELL);
+        orderRepository.save(order);
     }
 
     public void createLimitedSellOrder(final long companyId,
@@ -86,19 +84,22 @@ public class Individual {
                                        final BigDecimal minPrice,
                                        final BigDecimal maxPrice,
                                        final OrderRepository orderRepository) {
-        var order = constructOrder(amount, OrderOperationType.SELL);
+        var order = constructOrder(amount, companyId, OrderOperationType.SELL);
         order.setMinPrice(minPrice);
         order.setMaxPrice(maxPrice);
-        orderRepository.save(order, this.broker.getId(), companyId, this.id);
+        orderRepository.save(order);
     }
 
     public List<Stock> getAllOwnedStocks(final StockRepository stockRepository) {
         return stockRepository.getAllIndividualsStocks(this.id);
     }
 
-    private Order constructOrder(final long amount, final OrderOperationType operationType) {
+    private Order constructOrder(final long amount, final long companyId, final OrderOperationType operationType) {
         return Order.builder()
                 .size(amount)
+                .brokerId(this.broker.getId())
+                .individualId(this.id)
+                .companyId(companyId)
                 .operationType(operationType)
                 .timestamp(LocalDateTime.now())
                 .orderStatus(OrderStatus.ACTIVE)

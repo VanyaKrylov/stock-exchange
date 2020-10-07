@@ -54,7 +54,7 @@ public class StockMarketApplication {
     @Transactional
     public CommandLineRunner commandLineRunner() {
         return args -> {
-            var broker = addBroker();
+            /*var broker = addBroker();
             var indiv = addIndividual(broker);
             var company = testSaveCompany();
             var order = addOrder(33L, company.getId(), indiv.getId());
@@ -66,7 +66,10 @@ public class StockMarketApplication {
             //log.info(stockRepository.getAllUniqueStocks().toString());
             log.info(stockRepository.getAllIndividualsStocks(24).toString());
             log.info(orderRepository.findClientsOrdersForBroker(31L).toString());
-            log.info(orderRepository.findOrdersForBroker(33L).toString());
+            log.info(orderRepository.findOrdersForBroker(33L).toString());*/
+
+            var broker = addBroker();
+            log.info(brokerRepository.findCapitalByBankAccountId(broker.getBankAccountId()).toEngineeringString());
         };
     }
 
@@ -112,6 +115,9 @@ public class StockMarketApplication {
     private Order addOrder(Long brokerId, long companyId, Long indivId) {
         var order = Order.builder()
                 .size(1L)
+                .brokerId(brokerId)
+                .individualId(indivId)
+                .companyId(companyId)
                 .operationType(OrderOperationType.BUY)
                 .orderStatus(OrderStatus.ACTIVE)
                 .minPrice(BigDecimal.valueOf(40L))
@@ -119,8 +125,8 @@ public class StockMarketApplication {
                 .isPublic(false)
                 .timestamp(LocalDateTime.now())
                 .build();
-        var resOrder = orderRepository.save(order, brokerId, companyId, indivId);
-        var updatedOrder = orderRepository.save(resOrder, brokerId, companyId, indivId);
+        var resOrder = orderRepository.save(order);
+        var updatedOrder = orderRepository.save(resOrder);
 
         return resOrder;
     }

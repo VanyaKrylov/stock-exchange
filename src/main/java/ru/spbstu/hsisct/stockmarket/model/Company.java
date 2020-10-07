@@ -80,12 +80,13 @@ public class Company {
         }
         stockRepository.saveAll(stocks);
         var order = constructOrder(amount, price);
-        orderRepository.save(order, null, this.id, null);
+        orderRepository.save(order);
     }
 
     private Order constructOrder(final long amount, final BigDecimal price) {
         return Order.builder()
                 .size(amount)
+                .companyId(this.id)
                 .minPrice(price)
                 .maxPrice(price)
                 .orderStatus(OrderStatus.ACTIVE)

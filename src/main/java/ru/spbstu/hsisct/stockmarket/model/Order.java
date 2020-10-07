@@ -57,9 +57,16 @@ public class Order {
     private LocalDateTime timestamp;
     @Nullable
     private Long parentId;
+    @Nullable
+    private Long brokerId;
+    @Nullable
+    private Long individualId;
+    @NonNull
+    private Long companyId;
 
     public Order withId(final Long id) {
-        return new Order(id, this.size, this.minPrice, this.maxPrice, this.operationType, this.orderStatus, this.isPublic, this.timestamp, this.parentId);
+        return new Order(id, this.size, this.minPrice, this.maxPrice, this.operationType,
+                this.orderStatus, this.isPublic, this.timestamp, this.parentId, this.brokerId, this.individualId, this.companyId);
     }
 
     public boolean isLimitedOrder() {
@@ -80,5 +87,17 @@ public class Order {
         }
 
         return maxPrice;
+    }
+
+    public boolean isPublishedByCompany() {
+        assert Objects.nonNull(id);
+
+        return Objects.isNull(this.brokerId) && Objects.isNull(this.individualId);
+    }
+
+    public boolean isPublishedByBroker() {
+        assert Objects.nonNull(id);
+
+        return Objects.isNull(this.individualId);
     }
 }

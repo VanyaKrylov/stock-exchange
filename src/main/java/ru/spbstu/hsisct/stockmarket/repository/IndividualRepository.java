@@ -8,6 +8,9 @@ import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 import ru.spbstu.hsisct.stockmarket.model.Individual;
 
+import java.math.BigDecimal;
+import java.util.UUID;
+
 @Repository
 public interface IndividualRepository extends CrudRepository<Individual, Long> {
 
@@ -25,7 +28,10 @@ public interface IndividualRepository extends CrudRepository<Individual, Long> {
         UPDATE individuals_stocks SET active = false WHERE individual_id = :indivId AND stock_id = :stockId
         """, nativeQuery = true)
     void deleteStock(@Param("indivId") Long indivId, @Param("stockId") Long stockId);
-/*
-    @Query("SELECT i from Investor i where i.id in (select s.id from Stock s where s.company.id = :companyId)")
-    List<T> getInvestorsByCompanyId(@Param("companyId") Long companyId);*/
+
+    @Modifying
+    @Query(value = """
+        UPDATE Individual SET capital = :sum WHERE bankAccountId = :uuid
+    """)
+    void updateCapital(@Param("uuid") final UUID uuid, @Param("sum") final BigDecimal sum);
 }

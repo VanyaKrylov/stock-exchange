@@ -5,7 +5,11 @@ import lombok.NoArgsConstructor;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 import org.springframework.lang.Nullable;
+import ru.spbstu.hsisct.stockmarket.repository.BrokerRepository;
+import ru.spbstu.hsisct.stockmarket.repository.CompanyRepository;
 import ru.spbstu.hsisct.stockmarket.repository.OrderRepository;
+import ru.spbstu.hsisct.stockmarket.repository.StockRepository;
+import ru.spbstu.hsisct.stockmarket.service.PaymentService;
 
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
@@ -52,5 +56,31 @@ public class Broker {
         assert Objects.nonNull(id);
 
         return orderRepository.findOrdersForBroker(this.id);
+    }
+
+    public List<Order> getPurchasableCompaniesOrders(final OrderRepository orderRepository) {
+        assert Objects.nonNull(id);
+
+        return orderRepository.findPurchasableCompanyOrders();
+    }
+
+    public void buyCompanyStocks(final long amount,
+                                 final Order order,
+                                 final BrokerRepository brokerRepository,
+                                 final OrderRepository orderRepository,
+                                 final CompanyRepository companyRepository,
+                                 final StockRepository stockRepository,
+                                 final PaymentService paymentService) {
+        assert order.isPublishedByCompany();
+        assert order.getSize() >= amount;
+
+        var totalPrice = order.getMinPrice().multiply(BigDecimal.valueOf(amount));
+        var company = companyRepository.findById(order.getCompanyId());
+        var stocks = stockRepository.findNotOwnedStocks().subList(0, ((int) amount));
+
+        paymentService.brokerToCompanyPayment(this.bankAccountId, company.orElseThrow().getBankAccountId(), totalPrice);
+        stocks.forEach(stock -> brokerRepository.addStock(this.id, stock.getId()));
+        order.setSize(order.getSize() - amount);
+        orderRepository.save(order);
     }
 }

@@ -8,14 +8,13 @@ import java.util.Optional;
 
 public interface OrderRepository {
 
-    Order save(Order order,
-               @Nullable Long broker,
-               Long company,
-               @Nullable Long individual);
+    Order save(Order order);
 
     Optional<Order> findById(long id);
 
     List<Order> findClientsOrdersForBroker(long brokerId);
 
     List<Order> findOrdersForBroker(long brokerId);
+
+    List<Order> findPurchasableCompanyOrders();
 }

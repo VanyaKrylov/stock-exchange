@@ -18,9 +18,14 @@ public interface StockRepository extends CrudRepository<Stock, Long> {
 
 
     @Query(value = """
-        SELECT * FROM stock where id IN (SELECT stock_id FROM individuals_stocks WHERE individual_id = :indivId)
+        SELECT * FROM stock WHERE id IN (SELECT stock_id FROM individuals_stocks WHERE individual_id = :indivId)
     """, nativeQuery = true)
     List<Stock> getAllIndividualsStocks(@Param("indivId") final long indivId);
 
     Long countStockByCompanyId(final Long companyId);
+
+    @Query(value = """
+        SELECT * FROM stock WHERE id NOT IN (SELECT stock_id FROM stocks_owners)
+    """, nativeQuery = true)
+    List<Stock> findNotOwnedStocks();
 }

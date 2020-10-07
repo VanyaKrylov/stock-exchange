@@ -27,7 +27,7 @@ public class OrderRepositoryImpl implements OrderRepository {
     private final JdbcTemplate jdbcTemplate;
 
     @Override
-    public Order save(final Order order, final Long brokerId, final Long companyId, final Long individualId) {
+    public Order save(final Order order) {
         final KeyHolder keyHolder = new GeneratedKeyHolder();
         if (Objects.nonNull(order.getId())) {
             closeOrder(order.getId());
@@ -37,7 +37,7 @@ public class OrderRepositoryImpl implements OrderRepository {
                     INSERT INTO "order" (broker_id, company_id, individual_id, size, min_price, max_price, operation_type, order_status, timestamp, parent_id) 
                     VALUES(?, ?, ?, ?, ?, ?, ?, ?, ?, ?); 
                 """, Statement.RETURN_GENERATED_KEYS);
-                injectOrderFieldsIntoStatement(order, brokerId, companyId, individualId, statement);
+                injectOrderFieldsIntoStatement(order, statement);
 
                 return statement;
             }, keyHolder);
@@ -84,6 +84,13 @@ public class OrderRepositoryImpl implements OrderRepository {
         }, OrderRepositoryImpl::constructOrderListFromResultSet));
     }
 
+    @Override
+    public List<Order> findPurchasableCompanyOrders() {
+        return Objects.requireNonNull(jdbcTemplate.query("""
+                    SELECT * FROM "order" WHERE individual_id IS NULL AND broker_id IS NULL;
+                """, OrderRepositoryImpl::constructOrderListFromResultSet));
+    }
+
     private Order getInsertedOrderById(final long id) {
         return Objects.requireNonNull(jdbcTemplate.query(
                 con -> {
@@ -111,13 +118,10 @@ public class OrderRepositoryImpl implements OrderRepository {
     }
 
     private static void injectOrderFieldsIntoStatement(final Order order,
-                                                       @Nullable final Long brokerId,
-                                                       final long companyId,
-                                                       @Nullable final Long individualId,
                                                        final PreparedStatement statement) throws SQLException {
-        statement.setObject(1, brokerId);
-        statement.setObject(2, companyId);
-        statement.setObject(3, individualId);
+        statement.setObject(1, order.getBrokerId());
+        statement.setObject(2, order.getCompanyId());
+        statement.setObject(3, order.getIndividualId());
         statement.setLong(4, order.getSize());
         statement.setObject(5, order.isLimitedOrder() ? order.getMinPrice() : null);
         statement.setObject(6, order.isLimitedOrder() ? order.getMaxPrice() : null);
@@ -146,6 +150,9 @@ public class OrderRepositoryImpl implements OrderRepository {
                 .isPublic(rs.getBoolean("public"))
                 .timestamp(rs.getObject("timestamp", LocalDateTime.class))
                 .parentId(rs.getLong("parent_id") != 0 ? rs.getLong("parent_id") : null)
+                .brokerId(rs.getLong("broker_id") != 0 ? rs.getLong("broker_id") : null)
+                .individualId(rs.getLong("individual_id") != 0 ? rs.getLong("individual_id") : null)
+                .companyId(rs.getLong("company_id"))
                 .build();
     }
 

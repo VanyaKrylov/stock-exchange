@@ -7,9 +7,9 @@ import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 import ru.spbstu.hsisct.stockmarket.model.Broker;
-import ru.spbstu.hsisct.stockmarket.model.Stock;
 
-import java.beans.Transient;
+import java.math.BigDecimal;
+import java.util.UUID;
 
 @Repository
 public interface BrokerRepository extends CrudRepository<Broker, Long> {
@@ -28,5 +28,17 @@ public interface BrokerRepository extends CrudRepository<Broker, Long> {
         UPDATE stocks_owners SET active = false WHERE broker_id = :brokerId AND stock_id = :stockId
         """, nativeQuery = true)
     void deleteStock(@Param("brokerId") Long brokerId, @Param("stockId") Long stockId);
+
+    @Modifying
+    @Query(value = """
+        UPDATE Broker SET capital = :sum WHERE bankAccountId = :uuid
+    """)
+    void updateCapital(@Param("uuid") final UUID uuid, @Param("sum") final BigDecimal sum);
+
+    @SuppressWarnings("SpringDataRepositoryMethodReturnTypeInspection")
+    @Query(value = """
+        SELECT capital FROM broker WHERE bank_account_id = :uuid
+    """, nativeQuery = true)
+    BigDecimal findCapitalByBankAccountId(UUID uuid);
 }
 
