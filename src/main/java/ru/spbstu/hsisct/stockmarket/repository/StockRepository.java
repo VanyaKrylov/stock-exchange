@@ -43,7 +43,7 @@ public interface StockRepository extends CrudRepository<Stock, Long> {
     Long countStockByCompanyId(final Long companyId);
 
     @Query(value = """
-        SELECT * FROM stock WHERE id NOT IN (SELECT stock_id FROM stocks_owners)
+        SELECT * FROM stock WHERE id NOT IN (SELECT stock_id FROM stocks_owners WHERE active = true)
     """, nativeQuery = true)
     List<Stock> findNotOwnedStocks();
 

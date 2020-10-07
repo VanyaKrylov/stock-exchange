@@ -5,6 +5,7 @@ import lombok.NoArgsConstructor;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 import org.springframework.lang.Nullable;
+import ru.spbstu.hsisct.stockmarket.model.enums.OrderStatus;
 import ru.spbstu.hsisct.stockmarket.repository.BrokerRepository;
 import ru.spbstu.hsisct.stockmarket.repository.CompanyRepository;
 import ru.spbstu.hsisct.stockmarket.repository.OrderRepository;
@@ -22,6 +23,8 @@ import java.math.BigDecimal;
 import java.util.List;
 import java.util.Objects;
 import java.util.UUID;
+
+import static ru.spbstu.hsisct.stockmarket.model.enums.OrderStatus.CLOSED;
 
 @Data
 @Entity
@@ -78,11 +81,15 @@ public class Broker {
 
         var totalPrice = order.getMinPrice().multiply(BigDecimal.valueOf(amount));
         var company = companyRepository.findById(order.getCompanyId());
-        var stocks = stockRepository.findNotOwnedStocks().subList(0, ((int) amount));
+        var stocks = stockRepository.findNotOwnedStocks().subList(0, ((int) amount-1));
 
         paymentService.brokerToCompanyPayment(this.bankAccountId, company.orElseThrow().getBankAccountId(), totalPrice);
         stocks.forEach(stock -> brokerRepository.addStock(this.id, stock.getId()));
-        order.setSize(order.getSize() - amount);
+        if (order.getSize() - amount == 0) {
+            order.setOrderStatus(CLOSED);
+        } else {
+            order.setSize(order.getSize() - amount);
+        }
         orderRepository.save(order);
     }
 }

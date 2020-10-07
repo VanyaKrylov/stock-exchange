@@ -19,6 +19,8 @@ import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
 
+import static ru.spbstu.hsisct.stockmarket.model.enums.OrderStatus.CLOSED;
+
 @Repository
 @RequiredArgsConstructor
 public class OrderRepositoryImpl implements OrderRepository {
@@ -28,6 +30,9 @@ public class OrderRepositoryImpl implements OrderRepository {
     @Override
     public Order save(final Order order) {
         final KeyHolder keyHolder = new GeneratedKeyHolder();
+        if (order.getOrderStatus().equals(CLOSED) || order.getSize() == 0) {
+            return order;
+        }
         if (Objects.nonNull(order.getId())) {
             closeOrder(order.getId());
         }
@@ -135,7 +140,7 @@ public class OrderRepositoryImpl implements OrderRepository {
                     PreparedStatement statement = con.prepareStatement("""
                         UPDATE "order" SET order_status = ? WHERE id = ?
                     """);
-                    statement.setString(1, OrderStatus.CLOSED.name());
+                    statement.setString(1, CLOSED.name());
                     statement.setLong(2, id);
 
                     return statement;
