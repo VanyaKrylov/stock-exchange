@@ -19,4 +19,9 @@ public interface CompanyRepository extends CrudRepository<Company, Long> {
         UPDATE Company SET capital = :sum WHERE bankAccountId = :uuid
     """)
     void updateCapital(@Param("uuid") final UUID uuid, @Param("sum") final BigDecimal sum);
+
+    @Query(value = """
+        SELECT capital FROM company WHERE bank_account_id = :uuid
+    """, nativeQuery = true)
+    BigDecimal findCapitalByBankAccountId(@Param("uuid") UUID companyAccount);
 }

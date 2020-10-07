@@ -9,6 +9,7 @@ import ru.spbstu.hsisct.stockmarket.repository.BrokerRepository;
 import ru.spbstu.hsisct.stockmarket.repository.CompanyRepository;
 import ru.spbstu.hsisct.stockmarket.repository.OrderRepository;
 import ru.spbstu.hsisct.stockmarket.repository.StockRepository;
+import ru.spbstu.hsisct.stockmarket.service.PaymentService;
 
 import java.util.List;
 import java.util.stream.Collectors;
@@ -21,6 +22,7 @@ public class BrokerFacade {
     private final StockRepository stockRepository;
     private final OrderRepository orderRepository;
     private final CompanyRepository companyRepository;
+    private final PaymentService paymentService;
 
     public List<Broker> getAllBrokers() {
         return (List<Broker>) brokerRepository.findAll();
@@ -33,5 +35,11 @@ public class BrokerFacade {
                 .stream()
                 .map(order -> OrderInfoDto.of(order, companyRepository.findById(order.getCompanyId()).orElseThrow()))
                 .collect(Collectors.toList());
+    }
+
+    public void addStocks(final Long brokerId, final Long orderId, final Long size) {
+        var broker = brokerRepository.findById(brokerId).orElseThrow();
+        var order = orderRepository.findById(orderId).orElseThrow();
+        broker.buyCompanyStocks(size, order, brokerRepository, orderRepository, companyRepository, stockRepository, paymentService);
     }
 }

@@ -33,5 +33,14 @@
         </tbody>
     </table>
 </div>
+<div>
+    <h3>Buy company stocks</h3>
+    <form action="#" th:action="@{/broker/lk/__${broker.id}__/buy-company-stocks}" th:object="${broker}" method="post">
+        <label for="id">Order id</label>
+        <input type="text" th:field="${orderCompany.id}" id="id" placeholder="id">
+        <label for="size">Amount</label>
+        <input type="text" th:field="${orderCompany.size}" id="size" placeholder="size">
+        <button type="submit">Buy</button>
+</div>
 </body>
 </html>

@@ -40,6 +40,6 @@ public interface BrokerRepository extends CrudRepository<Broker, Long> {
     @Query(value = """
         SELECT capital FROM broker WHERE bank_account_id = :uuid
     """, nativeQuery = true)
-    BigDecimal findCapitalByBankAccountId(UUID uuid);
+    BigDecimal findCapitalByBankAccountId(@Param("uuid") UUID uuid);
 }
 

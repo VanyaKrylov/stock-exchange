@@ -49,7 +49,7 @@
 </table>
 <div>
     <h3>Create an order</h3>
-    <form action="#" th:action="@{/user/lk/__${Individual.id}__/create-order}" th:object="${Individual}" method="post">
+    <form action="#" th:action="@{/user/lk/__${individual.id}__/create-order}" th:object="${individual}" method="post">
         <label for="size">Order size</label>
         <input type="text" th:field="${order.size}" id="size" placeholder="size">
         <label for="minPrice">Minimal price</label>

@@ -19,9 +19,11 @@ public class PaymentService {
     @Transactional
     public void brokerToCompanyPayment(final UUID brokerAccount, final UUID companyAccount, final BigDecimal sum) {
         var brokerCapital = brokerRepository.findCapitalByBankAccountId(brokerAccount);
+        var companyCapital = companyRepository.findCapitalByBankAccountId(companyAccount);
         if (brokerCapital.compareTo(sum) < 0) {
             throw new IllegalArgumentException("Not enough money on broker account");
         }
-        companyRepository.updateCapital(companyAccount, brokerCapital.subtract(sum));
+        companyRepository.updateCapital(companyAccount, companyCapital.add(sum));
+        brokerRepository.updateCapital(brokerAccount, brokerCapital.subtract(sum));
     }
 }

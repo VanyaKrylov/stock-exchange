@@ -1,5 +1,8 @@
 package ru.spbstu.hsisct.stockmarket.controller;
 
+import lombok.AllArgsConstructor;
+import lombok.Data;
+import lombok.NoArgsConstructor;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -42,7 +45,23 @@ public class BrokerController {
     public String getBrokerHomePage(@PathVariable("brokerId") @NonNull Long brokerId, Model model) {
         model.addAttribute("broker", brokerRepository.findById(brokerId).orElseThrow());
         model.addAttribute("availCompStocks", brokerFacade.getAvailableCompanyStocks(brokerId));
+        model.addAttribute("orderCompany", new OrderIdAndSize());
 
         return "broker/lk";
     }
+
+    @PostMapping(value = "/lk/{brokerId}/buy-company-stocks", consumes = "application/x-www-form-urlencoded")
+    public String addCompanyStocks(@PathVariable("brokerId") @NonNull Long brokerId, final OrderIdAndSize orderIdAndSize) {
+        brokerFacade.addStocks(brokerId, orderIdAndSize.getId(), orderIdAndSize.getSize());
+
+        return "redirect:/broker/lk/" + brokerId;
+    }
+}
+
+@Data
+@NoArgsConstructor
+@AllArgsConstructor
+class OrderIdAndSize {
+    private Long id;
+    private Long size;
 }
