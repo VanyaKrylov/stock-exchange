@@ -37,7 +37,9 @@ public class BrokerController {
     }
 
     @GetMapping("/lk/{brokerId}")
-    public String getBrokerHomePage(@PathVariable("brokerId") @NonNull Long userId) {
+    public String getBrokerHomePage(@PathVariable("brokerId") @NonNull Long brokerId, Model model) {
+        model.addAttribute("broker", brokerRepository.findById(brokerId).orElseThrow());
+
         return "broker/lk";
     }
 }
