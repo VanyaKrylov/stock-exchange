@@ -61,15 +61,7 @@ public class IndividualFacade {
         var individual = individualRepository.findById(individualId).orElseThrow();
         return individual.getAllOrders(orderRepository)
                 .stream()
-                .map(order -> OrderInfoDto.builder()
-                        .id(order.getId())
-                        .company(companyRepository.findById(order.getCompanyId()).orElseThrow())
-                        .minPrice(order.getMinPrice())
-                        .maxPrice(order.getMaxPrice())
-                        .type(order.getOperationType().name())
-                        .size(order.getSize())
-                        .timestamp(order.getTimestamp())
-                        .build())
+                .map(order -> OrderInfoDto.of(order, companyRepository.findById(order.getCompanyId()).orElseThrow()))
                 .collect(Collectors.toList());
     }
 

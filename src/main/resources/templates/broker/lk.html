@@ -11,7 +11,27 @@
     <br>
 </div>
 <div>
-
+    <h3>Available company stocks</h3>
+    <table>
+        <thead>
+        <tr>
+            <th>Id</th>
+            <th>Type</th>
+            <th>Size</th>
+            <th>Price</th>
+            <th>Company name</th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr th:each="iorder : ${availCompStocks}">
+            <td th:text="${{iorder.id}}">0</td>
+            <td th:text="${{iorder.type}}">0</td>
+            <td th:text="${{iorder.size}}">0</td>
+            <td th:text="${{iorder.minPrice}}">0</td>
+            <td th:text="${{iorder.company.name}}">0</td>
+        </tr>
+        </tbody>
+    </table>
 </div>
 </body>
 </html>

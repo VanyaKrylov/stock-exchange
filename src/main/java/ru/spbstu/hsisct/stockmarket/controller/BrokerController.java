@@ -11,6 +11,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import ru.spbstu.hsisct.stockmarket.facade.BrokerFacade;
 import ru.spbstu.hsisct.stockmarket.model.Broker;
 import ru.spbstu.hsisct.stockmarket.repository.BrokerRepository;
 
@@ -21,6 +22,7 @@ import ru.spbstu.hsisct.stockmarket.repository.BrokerRepository;
 public class BrokerController {
 
     private final BrokerRepository brokerRepository;
+    private final BrokerFacade brokerFacade;
 
     @GetMapping("/new-broker")
     public String createNewBroker(Model model) {
@@ -39,6 +41,7 @@ public class BrokerController {
     @GetMapping("/lk/{brokerId}")
     public String getBrokerHomePage(@PathVariable("brokerId") @NonNull Long brokerId, Model model) {
         model.addAttribute("broker", brokerRepository.findById(brokerId).orElseThrow());
+        model.addAttribute("availCompStocks", brokerFacade.getAvailableCompanyStocks(brokerId));
 
         return "broker/lk";
     }

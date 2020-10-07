@@ -6,10 +6,8 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import ru.spbstu.hsisct.stockmarket.dto.OrderDto;
 import ru.spbstu.hsisct.stockmarket.facade.BrokerFacade;
@@ -61,7 +59,7 @@ public class IndividualController {
     }
 
     @PostMapping(value = "lk/{userId}/add-money", consumes = "application/x-www-form-urlencoded")
-    public String addMoneyToUser(@PathVariable("userId") @NonNull Long userId, BigDecimal capital, Model model) {
+    public String addMoneyToUser(@PathVariable("userId") @NonNull Long userId, BigDecimal capital) {
         individualFacade.addMoney(userId, capital);
 
         return "redirect:/user/lk/" + userId;
