@@ -74,17 +74,17 @@ public class Order {
     }
 
     public BigDecimal getMinPrice() {
-        if (!isLimitedOrder()) {
-            throw new  UnsupportedOperationException("Not a limited order");
-        }
+        /*if (!isLimitedOrder()) {
+            throw new UnsupportedOperationException("Not a limited order");
+        }*/
 
         return minPrice;
     }
 
     public BigDecimal getMaxPrice() {
-        if (!isLimitedOrder()) {
+        /*if (!isLimitedOrder()) {
             throw new  UnsupportedOperationException("Not a limited order");
-        }
+        }*/
 
         return maxPrice;
     }

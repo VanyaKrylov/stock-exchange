@@ -60,14 +60,14 @@ public class IndividualController {
         model.addAttribute("stocks", stockRepository.getAllUniqueStocks());
         model.addAttribute("order", new OrderDto());
         model.addAttribute("companies", companyRepository.findAll());
+        model.addAttribute("ownedOrders", individualFacade.getOwnedOrders(userId));
 
         return "user/lk";
     }
 
     @PostMapping(value = "lk/{userId}/add-money", consumes = "application/x-www-form-urlencoded")
     public String addMoneyToUser(@PathVariable("userId") @NonNull Long userId, BigDecimal capital, Model model) {
-        var individual = individualRepository.findById(userId).orElseThrow();
-        individual = individualFacade.addMoney(capital, individual);
+        var individual = individualFacade.addMoney(capital, userId);
         model.addAttribute("Individual", individual);
 
         return "redirect:/user/lk/" + individual.getId();
@@ -75,14 +75,14 @@ public class IndividualController {
 
     @PostMapping(value = "lk/{userId}/create-order", consumes = "application/x-www-form-urlencoded", params = "buy")
     public String createBuyOrder(@PathVariable("userId") @NonNull Long userId, OrderDto orderDto) {
-        log.info(orderDto.toString() );
-        return "redirect:/";
+        individualFacade.createBuyOrder(userId, orderDto);
+        return "redirect:/user/lk/" + userId;
     }
 
     @PostMapping(value = "lk/{userId}/create-order", consumes = "application/x-www-form-urlencoded", params = "sell")
     public String createSellOrder(@PathVariable("userId") @NonNull Long userId, OrderDto orderDto) {
-        log.info("Sell!" + orderDto.toString() );
-        return "redirect:/";
+        individualFacade.createSellOrder(userId, orderDto);
+        return "redirect:/user/lk/" + userId;
     }
 
 }

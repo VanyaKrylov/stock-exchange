@@ -100,6 +100,10 @@ public class Individual {
         return stockRepository.getAllIndividualsStocks(this.id);
     }
 
+    public List<Order> getAllOrders(final OrderRepository orderRepository) {
+        return orderRepository.findClientsOrders(this.id);
+    }
+
     private Order constructOrder(final long amount, final long companyId, final OrderOperationType operationType) {
         return Order.builder()
                 .size(amount)

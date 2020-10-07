@@ -12,6 +12,8 @@ public interface OrderRepository {
 
     Optional<Order> findById(long id);
 
+    List<Order> findClientsOrders(long clientId);
+
     List<Order> findClientsOrdersForBroker(long brokerId);
 
     List<Order> findOrdersForBroker(long brokerId);

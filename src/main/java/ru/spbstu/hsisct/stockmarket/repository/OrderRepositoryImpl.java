@@ -61,6 +61,18 @@ public class OrderRepositoryImpl implements OrderRepository {
     }
 
     @Override
+    public List<Order> findClientsOrders(long individualId) {
+        return Objects.requireNonNull(jdbcTemplate.query(con -> {
+            PreparedStatement statement = con.prepareStatement("""
+                        SELECT * FROM "order" WHERE individual_id = ? AND order_status = 'ACTIVE';
+                    """);
+            statement.setLong(1, individualId);
+
+            return statement;
+        }, OrderRepositoryImpl::constructOrderListFromResultSet));
+    }
+
+    @Override
     public List<Order> findClientsOrdersForBroker(final long brokerId) {
         return Objects.requireNonNull(jdbcTemplate.query(con -> {
             PreparedStatement statement = con.prepareStatement("""

@@ -1,22 +1,24 @@
 package ru.spbstu.hsisct.stockmarket.dto;
 
+import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Data;
-import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.NonNull;
-import lombok.RequiredArgsConstructor;
-import lombok.Setter;
-import lombok.ToString;
 import org.springframework.lang.Nullable;
 import ru.spbstu.hsisct.stockmarket.model.Company;
+import ru.spbstu.hsisct.stockmarket.model.Order;
 
 import java.math.BigDecimal;
-import java.util.Objects;
+import java.time.LocalDateTime;
 
 @Data
+@Builder
 @NoArgsConstructor
-public class OrderDto {
-
+@AllArgsConstructor
+public class OrderInfoDto {
+    @NonNull
+    private Long id;
     @NonNull
     private Long size;
     @Nullable
@@ -24,9 +26,7 @@ public class OrderDto {
     @Nullable
     private BigDecimal maxPrice;
     @NonNull
-    private Long id;
-
-    public boolean isLimitedOrder() {
-        return Objects.nonNull(minPrice);
-    }
+    private Company company;
+    @NonNull
+    private LocalDateTime timestamp;
 }

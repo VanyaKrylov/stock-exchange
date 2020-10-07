@@ -37,7 +37,7 @@
         <input type="text" th:field="${order.minPrice}" id="minPrice" placeholder="size">
         <label for="maxPrice">Maximal price</label>
         <input type="text" th:field="${order.maxPrice}" id="maxPrice" placeholder="size">
-        <select th:field="*{company.id}" class="form-control" id="company" name="company">
+        <select th:field="*{id}" class="form-control" id="company" name="company">
             <option
                     th:each="company: ${companies}"
                     th:value="${company.id}"
@@ -47,6 +47,31 @@
         <input type="submit" name="buy" value="Create Buy order">
         <input type="submit" name="sell" value="Create Sell order">
     </form>
+</div>
+<div>
+    <h3>List of current orders</h3>
+    <table>
+        <thead>
+        <tr>
+            <th>Id</th>
+            <th>Size</th>
+            <th>minPrice</th>
+            <th>maxPrice</th>
+            <th>Company name</th>
+            <th>Created at</th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr th:each="iorder : ${ownedOrders}">
+            <td th:text="${{iorder.id}}">0</td>
+            <td th:text="${{iorder.size}}">0</td>
+            <td th:text="${{iorder.minPrice}}">0</td>
+            <td th:text="${{iorder.maxPrice}}">0</td>
+            <td th:text="${{iorder.company.name}}">0</td>
+            <td th:text="${{iorder.timestamp}}">0</td>
+        </tr>
+        </tbody>
+    </table>
 </div>
 </body>
 </html>
