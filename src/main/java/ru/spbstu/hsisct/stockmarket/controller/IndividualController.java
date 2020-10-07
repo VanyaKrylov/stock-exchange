@@ -55,6 +55,7 @@ public class IndividualController {
         model.addAttribute("order", new OrderDto());
         model.addAttribute("companies", companyRepository.findAll());
         model.addAttribute("ownedOrders", individualFacade.getOwnedOrders(userId));
+        model.addAttribute("ownedStocks", individualFacade.getOwnedStocks(userId));
 
         return "user/lk";
     }

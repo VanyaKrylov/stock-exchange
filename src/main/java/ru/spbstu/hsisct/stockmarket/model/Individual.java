@@ -5,8 +5,10 @@ import lombok.NoArgsConstructor;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 import org.springframework.lang.Nullable;
+import ru.spbstu.hsisct.stockmarket.dto.StockDto;
 import ru.spbstu.hsisct.stockmarket.model.enums.OrderOperationType;
 import ru.spbstu.hsisct.stockmarket.model.enums.OrderStatus;
+import ru.spbstu.hsisct.stockmarket.repository.CompanyRepository;
 import ru.spbstu.hsisct.stockmarket.repository.IndividualRepository;
 import ru.spbstu.hsisct.stockmarket.repository.OrderRepository;
 import ru.spbstu.hsisct.stockmarket.repository.StockRepository;
@@ -25,6 +27,7 @@ import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.UUID;
+import java.util.stream.Collectors;
 
 @Data
 @Table(name = "individual")
@@ -98,6 +101,18 @@ public class Individual {
 
     public List<Stock> getAllOwnedStocks(final StockRepository stockRepository) {
         return stockRepository.getAllIndividualsStocks(this.id);
+    }
+
+    public List<StockDto> getAllOwnedStocksGroupedByCompanies(final StockRepository stockRepository,
+                                                              final CompanyRepository companyRepository) {
+        //@formatter:off
+        return stockRepository.getAllIndividualsStocksGrouped(this.id)
+                .stream()
+                .map(s -> new StockDto(s.getAmount(),
+                                       companyRepository.findById(s.getCompanyId()).orElseThrow(),
+                                       s.getType()))
+                .collect(Collectors.toList());
+        //@formatter:on
     }
 
     public List<Order> getAllOrders(final OrderRepository orderRepository) {

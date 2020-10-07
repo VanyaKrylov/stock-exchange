@@ -15,7 +15,7 @@
     <button type="submit">Submit</button>
 </form>
 </div>
-<h3>List of stocks</h3>
+<h3>List of available stocks</h3>
 <table>
     <thead>
     <tr>
@@ -30,15 +30,31 @@
     </tr>
     </tbody>
 </table>
+<h3>List of owned stocks</h3>
+<table>
+    <thead>
+    <tr>
+        <th>Company name</th>
+        <th>Stock type</th>
+    </tr>
+    </thead>
+    <tbody>
+    <tr th:each="stock : ${ownedStocks}">
+        <td th:text="${{stock.company.name}}">0</td>
+        <td th:text="${{stock.type}}">0</td>
+        <td th:text="${{stock.amount}}">0</td>
+    </tr>
+    </tbody>
+</table>
 <div>
     <h3>Create an order</h3>
     <form action="#" th:action="@{/user/lk/__${Individual.id}__/create-order}" th:object="${Individual}" method="post">
         <label for="size">Order size</label>
         <input type="text" th:field="${order.size}" id="size" placeholder="size">
         <label for="minPrice">Minimal price</label>
-        <input type="text" th:field="${order.minPrice}" id="minPrice" placeholder="size">
+        <input type="text" th:field="${order.minPrice}" id="minPrice" placeholder="sum">
         <label for="maxPrice">Maximal price</label>
-        <input type="text" th:field="${order.maxPrice}" id="maxPrice" placeholder="size">
+        <input type="text" th:field="${order.maxPrice}" id="maxPrice" placeholder="sum">
         <select th:field="*{id}" class="form-control" id="company" name="company">
             <option
                     th:each="company: ${companies}"

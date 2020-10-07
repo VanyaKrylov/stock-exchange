@@ -4,11 +4,14 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import ru.spbstu.hsisct.stockmarket.dto.OrderDto;
 import ru.spbstu.hsisct.stockmarket.dto.OrderInfoDto;
+import ru.spbstu.hsisct.stockmarket.dto.StockDto;
 import ru.spbstu.hsisct.stockmarket.model.Individual;
 import ru.spbstu.hsisct.stockmarket.model.Order;
+import ru.spbstu.hsisct.stockmarket.model.Stock;
 import ru.spbstu.hsisct.stockmarket.repository.CompanyRepository;
 import ru.spbstu.hsisct.stockmarket.repository.IndividualRepository;
 import ru.spbstu.hsisct.stockmarket.repository.OrderRepository;
+import ru.spbstu.hsisct.stockmarket.repository.StockRepository;
 
 import java.math.BigDecimal;
 import java.util.List;
@@ -21,6 +24,7 @@ public class IndividualFacade {
     private final IndividualRepository individualRepository;
     private final OrderRepository orderRepository;
     private final CompanyRepository companyRepository;
+    private final StockRepository stockRepository;
 
     public Individual addMoney(final Long individualId, final BigDecimal sum) {
         var individual = individualRepository.findById(individualId).orElseThrow();
@@ -67,11 +71,17 @@ public class IndividualFacade {
         individual.deleteOrder(orderId, orderRepository);
     }
 
-    public void deleteAccount(final Long userId) {
-        individualRepository.deleteById(userId);
-        orderRepository.findClientsOrders(userId)
+    public void deleteAccount(final Long individualId) {
+        individualRepository.deleteById(individualId);
+        orderRepository.findClientsOrders(individualId)
                 .stream()
                 .map(Order::getId)
                 .forEach(orderRepository::deleteById);
+    }
+
+    public List<StockDto> getOwnedStocks(final Long individualId) {
+        var individual = individualRepository.findById(individualId).orElseThrow();
+
+        return individual.getAllOwnedStocksGroupedByCompanies(stockRepository, companyRepository);
     }
 }
