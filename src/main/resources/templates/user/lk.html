@@ -5,6 +5,7 @@
     <title>Home user page</title>
 </head>
 <body>
+<div>
 <form action="#" th:action="@{/user/lk/__${Individual.id}__/add-money}" th:object="${Individual}" method="post">
     <span id="capital" th:text="${'Current capital is:' + Individual.capital}"></span>
     <br>
@@ -12,5 +13,25 @@
     <input type="text" th:field="*{capital}" id="sum" placeholder="sum">
     <button type="submit">Submit</button>
 </form>
+</div>
+<h2>List of stocks</h2>
+<table>
+    <thead>
+    <tr>
+        <th>Company name</th>
+        <th>Stock type</th>
+    </tr>
+    </thead>
+    <tbody>
+    <tr th:each="stock : ${stocks}">
+        <td th:text="${{stock.company.name}}">0</td>
+        <td th:text="${{stock.type}}">0</td>
+    </tr>
+    </tbody>
+</table>
+
+<div>
+
+</div>
 </body>
 </html>

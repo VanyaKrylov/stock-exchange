@@ -93,7 +93,7 @@ public class StockMarketApplication {
     }
 
     public Company testSaveCompany() {
-        return companyRepository.save(new Company(new BigDecimal("777.0")));
+        return companyRepository.save(new Company("D&D", new BigDecimal("777.0")));
     }
 
     public Company testFindCompany(Company company) {

@@ -131,6 +131,7 @@ DROP TABLE IF EXISTS "payment" cascade;*/
 
 CREATE TABLE IF NOT EXISTS COMPANY (
     "id" bigserial PRIMARY KEY NOT NULL,
+    "name" varchar(64) NOT NULL,
     "bank_account_id" uuid NOT NULL UNIQUE,
     "capital" numeric(16,2) NOT NULL
 );

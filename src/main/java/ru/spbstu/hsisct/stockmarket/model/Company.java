@@ -39,6 +39,8 @@ public class Company {
     @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "company_gen")
     @SequenceGenerator(name = "company_gen", sequenceName = "company_id_seq", allocationSize = 1)
     private Long id;
+    @NonNull
+    private String name;
     @Nullable
     private UUID bankAccountId;
     @NonNull
