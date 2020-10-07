@@ -84,5 +84,11 @@
         <button type="submit">Delete</button>
     </form>
 </div>
+<div>
+    <h3>Account management</h3>
+    <form action="#" th:action="@{/user/lk/__${Individual.id}__/delete-account}" th:object="${Individual}" method="post">
+        <button type="submit">Delete account</button>
+    </form>
+</div>
 </body>
 </html>

@@ -5,6 +5,7 @@ import org.springframework.stereotype.Service;
 import ru.spbstu.hsisct.stockmarket.dto.OrderDto;
 import ru.spbstu.hsisct.stockmarket.dto.OrderInfoDto;
 import ru.spbstu.hsisct.stockmarket.model.Individual;
+import ru.spbstu.hsisct.stockmarket.model.Order;
 import ru.spbstu.hsisct.stockmarket.repository.CompanyRepository;
 import ru.spbstu.hsisct.stockmarket.repository.IndividualRepository;
 import ru.spbstu.hsisct.stockmarket.repository.OrderRepository;
@@ -64,5 +65,13 @@ public class IndividualFacade {
     public void deleteOrder(Long individualId, Long orderId) {
         var individual = individualRepository.findById(individualId).orElseThrow();
         individual.deleteOrder(orderId, orderRepository);
+    }
+
+    public void deleteAccount(final Long userId) {
+        individualRepository.deleteById(userId);
+        orderRepository.findClientsOrders(userId)
+                .stream()
+                .map(Order::getId)
+                .forEach(orderRepository::deleteById);
     }
 }
