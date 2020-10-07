@@ -35,7 +35,7 @@ public class IndividualController {
 
     @GetMapping("/new-user")
     public String createNewUser(Model model) {
-        model.addAttribute("Individual", new Individual());
+        model.addAttribute("individual", new Individual());
         model.addAttribute("brokers", brokerFacade.getAllBrokers());
 
         return "user/new-user";

@@ -6,7 +6,7 @@
 </head>
 <body>
 <h1>Hello, new user!</h1>
-<form action="#" th:action="@{/user/add-user}" th:object="${Individual}" method="post">
+<form action="#" th:action="@{/user/add-user}" th:object="${individual}" method="post">
 <label for="name">Name</label>
 <input type="text" th:field="*{name}" id="name" placeholder="Name">
 <label for="surname">Surname</label>

@@ -24,7 +24,7 @@ public class BrokerController {
 
     @GetMapping("/new-broker")
     public String createNewBroker(Model model) {
-        model.addAttribute("Broker", new Broker());
+        model.addAttribute("broker", new Broker());
 
         return "broker/new-broker";
     }

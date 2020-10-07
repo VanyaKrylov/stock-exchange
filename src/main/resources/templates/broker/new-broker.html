@@ -6,7 +6,7 @@
 </head>
 <body>
 <h1>Hello, new broker!</h1>
-<form action="#" th:action="@{/user/add-broker}" th:object="${Broker}" method="post">
+<form action="#" th:action="@{/broker/add-broker}" th:object="${broker}" method="post">
     <label for="name">Name</label>
     <input type="text" th:field="*{name}" id="name" placeholder="Name">
     <label for="fee">Fee</label>
