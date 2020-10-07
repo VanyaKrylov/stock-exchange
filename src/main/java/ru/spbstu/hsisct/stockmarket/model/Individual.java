@@ -7,6 +7,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.lang.Nullable;
 import ru.spbstu.hsisct.stockmarket.model.enums.OrderOperationType;
 import ru.spbstu.hsisct.stockmarket.model.enums.OrderStatus;
+import ru.spbstu.hsisct.stockmarket.repository.IndividualRepository;
 import ru.spbstu.hsisct.stockmarket.repository.OrderRepository;
 import ru.spbstu.hsisct.stockmarket.repository.StockRepository;
 
@@ -54,8 +55,9 @@ public class Individual {
         bankAccountId = UUID.randomUUID();
     }
 
-    public void addMoney(final BigDecimal money) {
+    public Individual addMoney(final BigDecimal money, IndividualRepository individualRepository) {
         capital = capital.add(money);
+        return individualRepository.save(this);
     }
 
     public List<Stock> viewMarketStocks(final StockRepository stockRepository) {
