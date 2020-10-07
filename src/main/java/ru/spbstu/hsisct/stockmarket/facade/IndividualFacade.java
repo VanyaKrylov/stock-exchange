@@ -21,7 +21,7 @@ public class IndividualFacade {
     private final OrderRepository orderRepository;
     private final CompanyRepository companyRepository;
 
-    public Individual addMoney(final BigDecimal sum, final Long individualId) {
+    public Individual addMoney(final Long individualId, final BigDecimal sum) {
         var individual = individualRepository.findById(individualId).orElseThrow();
 
         return individual.addMoney(sum, individualRepository);
@@ -54,9 +54,15 @@ public class IndividualFacade {
                         .company(companyRepository.findById(order.getCompanyId()).orElseThrow())
                         .minPrice(order.getMinPrice())
                         .maxPrice(order.getMaxPrice())
+                        .type(order.getOperationType().name())
                         .size(order.getSize())
                         .timestamp(order.getTimestamp())
                         .build())
                 .collect(Collectors.toList());
+    }
+
+    public void deleteOrder(Long individualId, Long orderId) {
+        var individual = individualRepository.findById(individualId).orElseThrow();
+        individual.deleteOrder(orderId, orderRepository);
     }
 }

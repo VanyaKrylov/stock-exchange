@@ -26,6 +26,8 @@ public class OrderInfoDto {
     @Nullable
     private BigDecimal maxPrice;
     @NonNull
+    private String type;
+    @NonNull
     private Company company;
     @NonNull
     private LocalDateTime timestamp;

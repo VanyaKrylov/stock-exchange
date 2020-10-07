@@ -116,4 +116,8 @@ public class Individual {
                 .isPublic(false)
                 .build();
     }
+
+    public void deleteOrder(final Long orderId, final OrderRepository orderRepository) {
+        orderRepository.deleteById(orderId);
+    }
 }

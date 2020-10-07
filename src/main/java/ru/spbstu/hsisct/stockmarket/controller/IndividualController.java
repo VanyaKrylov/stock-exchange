@@ -67,10 +67,9 @@ public class IndividualController {
 
     @PostMapping(value = "lk/{userId}/add-money", consumes = "application/x-www-form-urlencoded")
     public String addMoneyToUser(@PathVariable("userId") @NonNull Long userId, BigDecimal capital, Model model) {
-        var individual = individualFacade.addMoney(capital, userId);
-        model.addAttribute("Individual", individual);
+        individualFacade.addMoney(userId, capital);
 
-        return "redirect:/user/lk/" + individual.getId();
+        return "redirect:/user/lk/" + userId;
     }
 
     @PostMapping(value = "lk/{userId}/create-order", consumes = "application/x-www-form-urlencoded", params = "buy")
@@ -82,6 +81,12 @@ public class IndividualController {
     @PostMapping(value = "lk/{userId}/create-order", consumes = "application/x-www-form-urlencoded", params = "sell")
     public String createSellOrder(@PathVariable("userId") @NonNull Long userId, OrderDto orderDto) {
         individualFacade.createSellOrder(userId, orderDto);
+        return "redirect:/user/lk/" + userId;
+    }
+
+    @PostMapping(value = "lk/{userId}/delete-order", consumes = "application/x-www-form-urlencoded")
+    public String deleteOrder(@PathVariable("userId") @NonNull Long userId, Long id) {
+        individualFacade.deleteOrder(userId, id);
         return "redirect:/user/lk/" + userId;
     }
 

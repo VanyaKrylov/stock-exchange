@@ -103,6 +103,20 @@ public class OrderRepositoryImpl implements OrderRepository {
                 """, OrderRepositoryImpl::constructOrderListFromResultSet));
     }
 
+    @Override
+    public void deleteById(final Long orderId) {
+        final int rowsAffected = jdbcTemplate.update(con -> {
+            PreparedStatement statement = con.prepareStatement("""
+                UPDATE "order" SET order_status = 'CLOSED' WHERE id = ?
+            """);
+            statement.setLong(1, orderId);
+
+            return statement;
+        });
+
+        assert rowsAffected <= 1;
+    }
+
     private Order getInsertedOrderById(final long id) {
         return Objects.requireNonNull(jdbcTemplate.query(
                 con -> {

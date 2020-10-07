@@ -19,4 +19,6 @@ public interface OrderRepository {
     List<Order> findOrdersForBroker(long brokerId);
 
     List<Order> findPurchasableCompanyOrders();
+
+    void deleteById(Long orderId);
 }
