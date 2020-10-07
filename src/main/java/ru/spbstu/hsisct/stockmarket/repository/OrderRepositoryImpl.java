@@ -34,8 +34,8 @@ public class OrderRepositoryImpl implements OrderRepository {
         }
         jdbcTemplate.update(con -> {
                 PreparedStatement statement = con.prepareStatement(""" 
-                    INSERT INTO "order" (broker_id, company_id, individual_id, size, min_price, max_price, operation_type, order_status, timestamp, parent_id) 
-                    VALUES(?, ?, ?, ?, ?, ?, ?, ?, ?, ?); 
+                    INSERT INTO "order" (broker_id, company_id, individual_id, size, min_price, max_price, operation_type, order_status, public, timestamp, parent_id) 
+                    VALUES(?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?); 
                 """, Statement.RETURN_GENERATED_KEYS);
                 injectOrderFieldsIntoStatement(order, statement);
 
@@ -76,7 +76,7 @@ public class OrderRepositoryImpl implements OrderRepository {
     public List<Order> findClientsOrdersForBroker(final long brokerId) {
         return Objects.requireNonNull(jdbcTemplate.query(con -> {
             PreparedStatement statement = con.prepareStatement("""
-                        SELECT * FROM "order" WHERE broker_id = ? AND individual_id IS NOT NULL AND order_status = 'ACTIVE';
+                        SELECT * FROM "order" WHERE broker_id = ? AND individual_id IS NOT NULL AND order_status = 'ACTIVE' AND public = false;
                     """);
             statement.setLong(1, brokerId);
 
@@ -143,8 +143,7 @@ public class OrderRepositoryImpl implements OrderRepository {
                 });
     }
 
-    private static void injectOrderFieldsIntoStatement(final Order order,
-                                                       final PreparedStatement statement) throws SQLException {
+    private static void injectOrderFieldsIntoStatement(final Order order, final PreparedStatement statement) throws SQLException {
         statement.setObject(1, order.getBrokerId());
         statement.setObject(2, order.getCompanyId());
         statement.setObject(3, order.getIndividualId());
@@ -153,8 +152,9 @@ public class OrderRepositoryImpl implements OrderRepository {
         statement.setObject(6, order.isLimitedOrder() ? order.getMaxPrice() : null);
         statement.setString(7, order.getOperationType().name());
         statement.setString(8, order.getOrderStatus().name());
-        statement.setObject(9, order.getTimestamp());
-        statement.setObject(10, order.getParentId());
+        statement.setBoolean(9, order.isPublic());
+        statement.setObject(10, order.getTimestamp());
+        statement.setObject(11, order.getParentId());
     }
 
     private static Order constructOrderFromResultSet(final ResultSet rs) throws SQLException {
