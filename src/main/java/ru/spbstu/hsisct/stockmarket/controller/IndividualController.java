@@ -13,11 +13,13 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
+import ru.spbstu.hsisct.stockmarket.dto.OrderDto;
 import ru.spbstu.hsisct.stockmarket.facade.BrokerFacade;
 import ru.spbstu.hsisct.stockmarket.facade.IndividualFacade;
 import ru.spbstu.hsisct.stockmarket.model.Broker;
 import ru.spbstu.hsisct.stockmarket.model.Individual;
 import ru.spbstu.hsisct.stockmarket.repository.BrokerRepository;
+import ru.spbstu.hsisct.stockmarket.repository.CompanyRepository;
 import ru.spbstu.hsisct.stockmarket.repository.IndividualRepository;
 import ru.spbstu.hsisct.stockmarket.repository.StockRepository;
 
@@ -35,6 +37,7 @@ public class IndividualController {
     private final IndividualRepository individualRepository;
     private final IndividualFacade individualFacade;
     private final StockRepository stockRepository;
+    private final CompanyRepository companyRepository;
 
     @GetMapping("/new-user")
     public String createNewUser(Model model) {
@@ -55,6 +58,8 @@ public class IndividualController {
     public String getUserHomePage(@PathVariable("userId") @NonNull Long userId, Model model) {
         model.addAttribute("Individual", individualRepository.findById(userId).orElseThrow());
         model.addAttribute("stocks", stockRepository.getAllUniqueStocks());
+        model.addAttribute("order", new OrderDto());
+        model.addAttribute("companies", companyRepository.findAll());
 
         return "user/lk";
     }
@@ -67,4 +72,17 @@ public class IndividualController {
 
         return "redirect:/user/lk/" + individual.getId();
     }
+
+    @PostMapping(value = "lk/{userId}/create-order", consumes = "application/x-www-form-urlencoded", params = "buy")
+    public String createBuyOrder(@PathVariable("userId") @NonNull Long userId, OrderDto orderDto) {
+        log.info(orderDto.toString() );
+        return "redirect:/";
+    }
+
+    @PostMapping(value = "lk/{userId}/create-order", consumes = "application/x-www-form-urlencoded", params = "sell")
+    public String createSellOrder(@PathVariable("userId") @NonNull Long userId, OrderDto orderDto) {
+        log.info("Sell!" + orderDto.toString() );
+        return "redirect:/";
+    }
+
 }

@@ -14,7 +14,7 @@
     <button type="submit">Submit</button>
 </form>
 </div>
-<h2>List of stocks</h2>
+<h3>List of stocks</h3>
 <table>
     <thead>
     <tr>
@@ -29,9 +29,24 @@
     </tr>
     </tbody>
 </table>
-
 <div>
-
+    <form action="#" th:action="@{/user/lk/__${Individual.id}__/create-order}" th:object="${Individual}" method="post">
+        <label for="size">Order size</label>
+        <input type="text" th:field="${order.size}" id="size" placeholder="size">
+        <label for="minPrice">Minimal price</label>
+        <input type="text" th:field="${order.minPrice}" id="minPrice" placeholder="size">
+        <label for="maxPrice">Maximal price</label>
+        <input type="text" th:field="${order.maxPrice}" id="maxPrice" placeholder="size">
+        <select th:field="*{company.id}" class="form-control" id="company" name="company">
+            <option
+                    th:each="company: ${companies}"
+                    th:value="${company.id}"
+                    th:text="${company.name}">
+            </option>
+        </select>
+        <input type="submit" name="buy" value="Create Buy order">
+        <input type="submit" name="sell" value="Create Sell order">
+    </form>
 </div>
 </body>
 </html>
