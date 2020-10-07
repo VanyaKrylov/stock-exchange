@@ -6,5 +6,14 @@
 </head>
 <body>
 <h1>Hello, new broker!</h1>
+<form action="#" th:action="@{/user/add-broker}" th:object="${Broker}" method="post">
+    <label for="name">Name</label>
+    <input type="text" th:field="*{name}" id="name" placeholder="Name">
+    <label for="fee">Fee</label>
+    <input type="text" th:field="*{fee}" id="fee" placeholder="sum">
+    <label for="capital">Capital</label>
+    <input type="text" th:field="*{capital}" id="capital" placeholder="sum">
+    <button type="submit">Create</button>
+</form>
 </body>
 </html>
