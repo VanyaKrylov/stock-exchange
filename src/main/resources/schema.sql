@@ -145,6 +145,7 @@ CREATE TABLE IF NOT EXISTS STOCK (
 
 CREATE TABLE IF NOT EXISTS BROKER (
     "id" bigserial PRIMARY KEY NOT NULL,
+    "name" varchar(64) NOT NULL,
     "bank_account_id" uuid NOT NULL UNIQUE,
     "fee" numeric(16,2) NOT NULL,
     "capital" numeric(16,2) NOT NULL
@@ -152,6 +153,8 @@ CREATE TABLE IF NOT EXISTS BROKER (
 
 CREATE TABLE IF NOT EXISTS INDIVIDUAL (
     "id" bigserial PRIMARY KEY NOT NULL,
+    "name" varchar(64) NOT NULL,
+    "surname" varchar(64) NOT NULL,
     "broker_id" bigint NOT NULL,
     "bank_account_id" uuid NOT NULL UNIQUE,
     "capital" numeric(16,2) NOT NULL,

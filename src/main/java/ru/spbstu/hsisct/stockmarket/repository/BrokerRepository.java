@@ -9,6 +9,7 @@ import org.springframework.transaction.annotation.Transactional;
 import ru.spbstu.hsisct.stockmarket.model.Broker;
 
 import java.math.BigDecimal;
+import java.util.List;
 import java.util.UUID;
 
 @Repository

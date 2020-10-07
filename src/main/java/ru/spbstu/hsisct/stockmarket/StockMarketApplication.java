@@ -50,11 +50,11 @@ public class StockMarketApplication {
     private final OrderRepository orderRepository;
 
 
-    @Bean
+   /* @Bean
     @Transactional
     public CommandLineRunner commandLineRunner() {
         return args -> {
-            /*var broker = addBroker();
+            *//*var broker = addBroker();
             var indiv = addIndividual(broker);
             var company = testSaveCompany();
             var order = addOrder(33L, company.getId(), indiv.getId());
@@ -66,12 +66,12 @@ public class StockMarketApplication {
             //log.info(stockRepository.getAllUniqueStocks().toString());
             log.info(stockRepository.getAllIndividualsStocks(24).toString());
             log.info(orderRepository.findClientsOrdersForBroker(31L).toString());
-            log.info(orderRepository.findOrdersForBroker(33L).toString());*/
+            log.info(orderRepository.findOrdersForBroker(33L).toString());*//*
 
             var broker = addBroker();
             log.info(brokerRepository.findCapitalByBankAccountId(broker.getBankAccountId()).toEngineeringString());
         };
-    }
+    }*/
 
     private Stock addStock() {
         var company = companyRepository.findAll().iterator().next();
@@ -105,11 +105,11 @@ public class StockMarketApplication {
     }
 
     private Broker addBroker() {
-        return brokerRepository.save(new Broker(BigDecimal.valueOf(123), BigDecimal.valueOf(321)));
+        return brokerRepository.save(new Broker("Best broker", BigDecimal.valueOf(123), BigDecimal.valueOf(321)));
     }
 
     private Individual addIndividual(final Broker broker) {
-        return individualRepository.save(new Individual(broker, BigDecimal.valueOf(98)));
+        return individualRepository.save(new Individual("John", "Johny", broker, BigDecimal.valueOf(98)));
     }
 
     private Order addOrder(Long brokerId, long companyId, Long indivId) {

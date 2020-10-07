@@ -37,6 +37,10 @@ public class Individual {
     @SequenceGenerator(name = "individual_gen", sequenceName = "individual_id_seq", allocationSize = 1)
     private Long id;
     @NonNull
+    private String name;
+    @NonNull
+    private String surname;
+    @NonNull
     @OneToOne(cascade = CascadeType.MERGE)
     @JoinColumn(name = "broker_id", referencedColumnName = "id")
     private Broker broker;

@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Create new user</title>
+</head>
+<body>
+<h1>Hello, new user!</h1>
+<form action="#" th:action="@{/user/add-user}" th:object="${Individual}" method="post">
+<label for="name">Name</label>
+<input type="text" th:field="*{name}" id="name" placeholder="Name">
+<label for="surname">Surname</label>
+<input type="text" th:field="*{surname}" id="surname" placeholder="Surname">
+<label for="capital">Money</label>
+<input type="text" th:field="*{capital}" id="capital" placeholder="Capital">
+<select th:field="*{broker.id}" class="form-control" id="broker" name="broker">
+    <option value="#" disabled="disabled" selected="selected">Select broker</option>
+    <option
+            th:each="broker: ${brokers}"
+            th:value="${broker.id}"
+            th:text="${broker.name + ', with fee:' + broker.fee}">
+    </option>
+</select>
+<button type="submit">Create</button>
+</form>
+</body>
+</html>

@@ -34,6 +34,8 @@ public class Broker {
     @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "broker_gen")
     @SequenceGenerator(name = "broker_gen", sequenceName = "broker_id_seq", allocationSize = 1)
     private Long id;
+    @NonNull
+    private String name;
     @Nullable
     private UUID bankAccountId;
     @NonNull
