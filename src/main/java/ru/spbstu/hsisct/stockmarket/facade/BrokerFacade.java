@@ -45,7 +45,11 @@ public class BrokerFacade {
     public void addStocks(final Long brokerId, final Long orderId, final Long size) {
         var broker = brokerRepository.findById(brokerId).orElseThrow();
         var order = orderRepository.findById(orderId).orElseThrow();
-        broker.buyCompanyStocks(size, order, brokerRepository, orderRepository, companyRepository, stockRepository, paymentService);
+        try {
+            broker.buyCompanyStocks(size, order, brokerRepository, orderRepository, companyRepository, stockRepository, paymentService);
+        } catch (Exception e) {
+            log.error(e.getMessage());
+        }
     }
 
     public List<StockDto> getOwnedStocks(final long brokerId) {

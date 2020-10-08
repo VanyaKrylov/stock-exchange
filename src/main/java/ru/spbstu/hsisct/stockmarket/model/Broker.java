@@ -82,10 +82,10 @@ public class Broker {
         assert order.getSize() >= amount;
 
         var totalPrice = order.getMinPrice().multiply(BigDecimal.valueOf(amount));
-        var company = companyRepository.findById(order.getCompanyId());
-        var stocks = stockRepository.findNotOwnedStocks().subList(0, ((int) amount));
+        var company = companyRepository.findById(order.getCompanyId()).orElseThrow();
+        var stocks = stockRepository.findNotOwnedStocks(company.getId()).subList(0, ((int) amount));
 
-        paymentService.brokerToCompanyPayment(this.bankAccountId, company.orElseThrow().getBankAccountId(), totalPrice);
+        paymentService.brokerToCompanyPayment(this.bankAccountId, company.getBankAccountId(), totalPrice);
         stocks.forEach(stock -> brokerRepository.addStock(this.id, stock.getId()));
         if (order.getSize() - amount == 0) {
             order.setOrderStatus(CLOSED);
