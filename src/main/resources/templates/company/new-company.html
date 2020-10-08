@@ -5,6 +5,12 @@
     <title>Create new company</title>
 </head>
 <body>
-<H1>Hello, new company!</H1>
+<form action="#" th:action="@{/broker/add-company}" th:object="${broker}" method="post">
+    <label for="name">Name</label>
+    <input type="text" th:field="*{name}" id="name" placeholder="Name">
+    <label for="capital">Capital</label>
+    <input type="text" th:field="*{capital}" id="capital" placeholder="sum">
+    <button type="submit">Create</button>
+</form>
 </body>
 </html>
