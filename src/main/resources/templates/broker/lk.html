@@ -42,5 +42,24 @@
         <input type="text" th:field="${orderCompany.size}" id="size" placeholder="size">
         <button type="submit">Buy</button>
 </div>
+<div>
+    <h3>Owned stocks</h3>
+    <table>
+        <thead>
+        <tr>
+            <th>Company name</th>
+            <th>Stock type</th>
+            <th>Amount</th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr th:each="stock : ${ownedStocks}">
+            <td th:text="${{stock.company.name}}">0</td>
+            <td th:text="${{stock.type}}">0</td>
+            <td th:text="${{stock.amount}}">0</td>
+        </tr>
+        </tbody>
+    </table>
+</div>
 </body>
 </html>

@@ -5,6 +5,8 @@ import lombok.NoArgsConstructor;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 import org.springframework.lang.Nullable;
+import ru.spbstu.hsisct.stockmarket.dto.OrderInfoDto;
+import ru.spbstu.hsisct.stockmarket.dto.StockDto;
 import ru.spbstu.hsisct.stockmarket.model.enums.OrderStatus;
 import ru.spbstu.hsisct.stockmarket.repository.BrokerRepository;
 import ru.spbstu.hsisct.stockmarket.repository.CompanyRepository;
@@ -23,6 +25,7 @@ import java.math.BigDecimal;
 import java.util.List;
 import java.util.Objects;
 import java.util.UUID;
+import java.util.stream.Collectors;
 
 import static ru.spbstu.hsisct.stockmarket.model.enums.OrderStatus.CLOSED;
 
@@ -81,7 +84,7 @@ public class Broker {
 
         var totalPrice = order.getMinPrice().multiply(BigDecimal.valueOf(amount));
         var company = companyRepository.findById(order.getCompanyId());
-        var stocks = stockRepository.findNotOwnedStocks().subList(0, ((int) amount-1));
+        var stocks = stockRepository.findNotOwnedStocks().subList(0, ((int) amount));
 
         paymentService.brokerToCompanyPayment(this.bankAccountId, company.orElseThrow().getBankAccountId(), totalPrice);
         stocks.forEach(stock -> brokerRepository.addStock(this.id, stock.getId()));
@@ -91,5 +94,17 @@ public class Broker {
             order.setSize(order.getSize() - amount);
         }
         orderRepository.save(order);
+    }
+
+    public List<StockDto> getAllOwnedStocksGroupedByCompanies(final StockRepository stockRepository,
+                                                              final CompanyRepository companyRepository) {
+        //@formatter:off
+        return stockRepository.getAllBrokersStocksGrouped(this.id)
+                .stream()
+                .map(s -> new StockDto(s.getAmount(),
+                                       companyRepository.findById(s.getCompanyId()).orElseThrow(),
+                                       s.getType()))
+                .collect(Collectors.toList());
+        //@formatter:on
     }
 }

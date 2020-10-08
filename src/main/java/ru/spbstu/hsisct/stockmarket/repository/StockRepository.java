@@ -32,6 +32,14 @@ public interface StockRepository extends CrudRepository<Stock, Long> {
     List<StockWithCount> getAllIndividualsStocksGrouped(@Param("indivId") long indivId);
 
     @Query(value = """
+        SELECT count(*) as amount, s.company_id as \"companyId\", s.type as type FROM stock AS s
+            WHERE s.id IN (
+                SELECT stock_id FROM stocks_owners WHERE broker_id = :brokerId AND active = true)
+            GROUP BY s.type, s.company_id
+    """, nativeQuery = true)
+    List<StockWithCount> getAllBrokersStocksGrouped(@Param("brokerId") long brokerId);
+
+    @Query(value = """
         SELECT count(*) FROM stock AS s
             WHERE s.id IN (
                 SELECT stock_id FROM individuals_stocks

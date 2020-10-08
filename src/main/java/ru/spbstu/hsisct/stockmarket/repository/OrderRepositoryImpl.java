@@ -30,9 +30,6 @@ public class OrderRepositoryImpl implements OrderRepository {
     @Override
     public Order save(final Order order) {
         final KeyHolder keyHolder = new GeneratedKeyHolder();
-        if (order.getOrderStatus().equals(CLOSED) || order.getSize() == 0) {
-            return order;
-        }
         if (Objects.nonNull(order.getId())) {
             closeOrder(order.getId());
         }

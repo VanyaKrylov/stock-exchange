@@ -42,4 +42,10 @@ public class BrokerFacade {
         var order = orderRepository.findById(orderId).orElseThrow();
         broker.buyCompanyStocks(size, order, brokerRepository, orderRepository, companyRepository, stockRepository, paymentService);
     }
+
+    public List<StockDto> getOwnedStocks(final long brokerId) {
+        var broker = brokerRepository.findById(brokerId).orElseThrow();
+
+        return broker.getAllOwnedStocksGroupedByCompanies(stockRepository, companyRepository);
+    }
 }
