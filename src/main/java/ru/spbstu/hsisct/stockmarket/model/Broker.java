@@ -156,4 +156,10 @@ public class Broker {
         order.setSize(order.getSize() - amount);
         orderRepository.save(order);
     }
+
+    public void publishOrder(final Long orderId, final OrderRepository orderRepository) {
+        var order = orderRepository.findById(orderId).orElseThrow();
+        order.setPublic(true);
+        orderRepository.save(order);
+    }
 }

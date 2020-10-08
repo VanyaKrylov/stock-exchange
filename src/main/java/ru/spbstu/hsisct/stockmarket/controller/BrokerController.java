@@ -74,6 +74,13 @@ public class BrokerController {
 
         return "redirect:/broker/lk/" + brokerId;
     }
+
+    @PostMapping(value = "/lk/{brokerId}/publish-client-orders", consumes = "application/x-www-form-urlencoded")
+    public String publishClientOrder(@PathVariable("brokerId") @NonNull Long brokerId, Long orderId) {
+        brokerFacade.publishOrder(brokerId, orderId);
+
+        return "redirect:/broker/lk/" + brokerId;
+    }
 }
 
 @Data

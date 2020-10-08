@@ -82,4 +82,9 @@ public class BrokerFacade {
             log.error(e.getMessage());
         }
     }
+
+    public void publishOrder(final Long brokerId, final Long orderId) {
+        var broker = brokerRepository.findById(brokerId).orElseThrow();
+        broker.publishOrder(orderId, orderRepository);
+    }
 }
