@@ -16,7 +16,6 @@
         <thead>
         <tr>
             <th>Id</th>
-            <th>Type</th>
             <th>Size</th>
             <th>Price</th>
             <th>Company name</th>
@@ -25,7 +24,6 @@
         <tbody>
         <tr th:each="iorder : ${availCompStocks}">
             <td th:text="${{iorder.id}}">0</td>
-            <td th:text="${{iorder.type}}">0</td>
             <td th:text="${{iorder.size}}">0</td>
             <td th:text="${{iorder.minPrice}}">0</td>
             <td th:text="${{iorder.company.name}}">0</td>
@@ -57,6 +55,33 @@
             <td th:text="${{stock.company.name}}">0</td>
             <td th:text="${{stock.type}}">0</td>
             <td th:text="${{stock.amount}}">0</td>
+        </tr>
+        </tbody>
+    </table>
+</div>
+<div>
+    <h3>Pending clients orders</h3>
+    <table>
+        <thead>
+        <tr>
+            <th>Id</th>
+            <th>Type</th>
+            <th>Size</th>
+            <th>minPrice</th>
+            <th>maxPrice</th>
+            <th>Company name</th>
+            <th>Created at</th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr th:each="corder : ${clientsOrders}">
+            <td th:text="${{corder.id}}">0</td>
+            <td th:text="${{corder.type}}">0</td>
+            <td th:text="${{corder.size}}">0</td>
+            <td th:text="${{corder.minPrice}}">0</td>
+            <td th:text="${{corder.maxPrice}}">0</td>
+            <td th:text="${{corder.company.name}}">0</td>
+            <td th:text="${{corder.timestamp}}">0</td>
         </tr>
         </tbody>
     </table>

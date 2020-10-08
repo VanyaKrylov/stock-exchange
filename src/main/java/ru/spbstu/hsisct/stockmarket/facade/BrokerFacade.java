@@ -48,4 +48,13 @@ public class BrokerFacade {
 
         return broker.getAllOwnedStocksGroupedByCompanies(stockRepository, companyRepository);
     }
+
+    public List<OrderInfoDto> getAllClientsOrders(final Long brokerId) {
+        var broker = brokerRepository.findById(brokerId).orElseThrow();
+
+        return broker.getClientsOrders(orderRepository)
+                .stream()
+                .map(order -> OrderInfoDto.of(order, companyRepository.findById(order.getCompanyId()).orElseThrow()))
+                .collect(Collectors.toList());
+    }
 }

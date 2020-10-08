@@ -47,6 +47,7 @@ public class BrokerController {
         model.addAttribute("availCompStocks", brokerFacade.getAvailableCompanyStocks(brokerId));
         model.addAttribute("orderCompany", new OrderIdAndSize());
         model.addAttribute("ownedStocks", brokerFacade.getOwnedStocks(brokerId));
+        model.addAttribute("clientsOrders", brokerFacade.getAllClientsOrders(brokerId));
 
         return "broker/lk";
     }

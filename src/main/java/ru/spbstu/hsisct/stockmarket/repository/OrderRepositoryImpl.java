@@ -100,7 +100,8 @@ public class OrderRepositoryImpl implements OrderRepository {
     @Override
     public List<Order> findPurchasableCompanyOrders() {
         return Objects.requireNonNull(jdbcTemplate.query("""
-                    SELECT * FROM "order" WHERE individual_id IS NULL AND broker_id IS NULL AND order_status = 'ACTIVE';
+                    SELECT * FROM "order" 
+                        WHERE individual_id IS NULL AND broker_id IS NULL AND order_status = 'ACTIVE' AND operation_type = 'SELL';
                 """, OrderRepositoryImpl::constructOrderListFromResultSet));
     }
 
