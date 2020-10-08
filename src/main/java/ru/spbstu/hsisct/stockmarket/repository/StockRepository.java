@@ -24,10 +24,10 @@ public interface StockRepository extends CrudRepository<Stock, Long> {
 
     @Query(value = """
         SELECT * FROM stock 
-        WHERE id IN 
-            (SELECT stock_id FROM individuals_stocks 
-                WHERE individual_id = :indivId AND active = true)
-        AND company_id = :companyId
+            WHERE id IN 
+                (SELECT stock_id FROM individuals_stocks 
+                    WHERE individual_id = :indivId AND active = true)
+            AND company_id = :companyId
     """, nativeQuery = true)
     List<Stock> findAllIndividualsStocksForCompany(@Param("indivId") final long indivId, @Param("companyId") final long companyId);
 
@@ -48,6 +48,16 @@ public interface StockRepository extends CrudRepository<Stock, Long> {
             GROUP BY s.type, s.company_id
     """, nativeQuery = true)
     List<StockWithCount> findAllBrokersStocksGrouped(@Param("brokerId") long brokerId);
+
+    @Query(value = """
+        SELECT * FROM stock AS s
+            WHERE s.id IN (
+                SELECT stock_id FROM stocks_owners WHERE broker_id = :brokerId AND active = true)
+            AND s.id NOT IN (
+                SELECT stock_id FROM individuals_stocks WHERE active = true)
+            AND company_id = :companyId
+    """, nativeQuery = true)
+    List<Stock> findAllBrokerStocksForCompany(@Param("brokerId") final long brokerId, @Param("companyId") final long companyId);
 
     @Query(value = """
         SELECT count(*) FROM stock AS s

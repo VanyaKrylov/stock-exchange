@@ -64,11 +64,14 @@ public class BrokerController {
     @PostMapping(value = "/lk/{brokerId}/manage-client-orders", consumes = "application/x-www-form-urlencoded", params = "buy")
     public String buyPendingOrdersFromClients(@PathVariable("brokerId") @NonNull Long brokerId, OrderIdSizeAndPrice orderIdSizeAndPrice) {
         brokerFacade.buyStocksFromOrder(brokerId, orderIdSizeAndPrice.getOrderId(), orderIdSizeAndPrice.getSize(), orderIdSizeAndPrice.getPrice());
+
         return "redirect:/broker/lk/" + brokerId;
     }
 
     @PostMapping(value = "/lk/{brokerId}/manage-client-orders", consumes = "application/x-www-form-urlencoded", params = "sell")
     public String sellToPendingOrdersFromClients(@PathVariable("brokerId") @NonNull Long brokerId, OrderIdSizeAndPrice orderIdSizeAndPrice) {
+        brokerFacade.sellStocksForOrder(brokerId, orderIdSizeAndPrice.getOrderId(), orderIdSizeAndPrice.getSize(), orderIdSizeAndPrice.getPrice());
+
         return "redirect:/broker/lk/" + brokerId;
     }
 }

@@ -127,7 +127,32 @@ public class Broker {
         paymentService.brokerToIndividualTransfer(this.bankAccountId, individual.getBankAccountId(), totalSum);
         stockRepository.findAllIndividualsStocksForCompany(order.getIndividualId(), order.getCompanyId())
                 .subList(0, amount.intValue())
-                .forEach(stock -> individualRepository.deleteStock(order.getIndividualId(), stock.getId()));
+                .forEach(stock -> individualRepository.deleteStock(individual.getId(), stock.getId()));
+        order.setSize(order.getSize() - amount);
+        orderRepository.save(order);
+    }
+
+    public void sellStocksToClient(final Order order,
+                                   final Long amount,
+                                   final BigDecimal price,
+                                   final PaymentService paymentService,
+                                   final IndividualRepository individualRepository,
+                                   final StockRepository stockRepository,
+                                   final OrderRepository orderRepository) {
+        assert order.getBrokerId() != null;
+        var brokerStocksForGivenCompany = stockRepository.findAllBrokerStocksForCompany(order.getBrokerId(), order.getCompanyId());
+        if (brokerStocksForGivenCompany.size() < amount) {
+            throw new IllegalArgumentException("Not enough stocks of that type are owned by broker");
+        }
+        assert order.getIndividualId() != null;
+        var individual = individualRepository.findById(order.getIndividualId()).orElseThrow();
+        var totalSum =
+                price
+                        .multiply(BigDecimal.valueOf(amount))
+                        .add(this.fee
+                                .multiply(BigDecimal.valueOf(amount))); // price * amount + (fee * amount)
+        paymentService.individualToBrokerTransfer(individual.getBankAccountId(), this.bankAccountId, totalSum);
+        brokerStocksForGivenCompany.subList(0, amount.intValue()).forEach(stock -> individualRepository.addStock(individual.getId(), stock.getId()));
         order.setSize(order.getSize() - amount);
         orderRepository.save(order);
     }

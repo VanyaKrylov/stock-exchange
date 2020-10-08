@@ -1,6 +1,7 @@
 package ru.spbstu.hsisct.stockmarket.facade;
 
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import ru.spbstu.hsisct.stockmarket.dto.OrderInfoDto;
 import ru.spbstu.hsisct.stockmarket.dto.StockDto;
@@ -16,6 +17,7 @@ import java.math.BigDecimal;
 import java.util.List;
 import java.util.stream.Collectors;
 
+@Slf4j
 @Service
 @RequiredArgsConstructor
 public class BrokerFacade {
@@ -64,6 +66,20 @@ public class BrokerFacade {
     public void buyStocksFromOrder(final Long brokerId, final Long orderId, final Long amount, final BigDecimal sum) {
         var broker = brokerRepository.findById(brokerId).orElseThrow();
         var order = orderRepository.findById(orderId).orElseThrow();
-        broker.buyClientStocks(order, amount, sum, paymentService, individualRepository, stockRepository, orderRepository);
+        try {
+            broker.buyClientStocks(order, amount, sum, paymentService, individualRepository, stockRepository, orderRepository);
+        } catch (Exception e) {
+            log.error(e.getMessage());
+        }
+    }
+
+    public void sellStocksForOrder(final Long brokerId, final Long orderId, final Long amount, final BigDecimal sum) {
+        var broker = brokerRepository.findById(brokerId).orElseThrow();
+        var order = orderRepository.findById(orderId).orElseThrow();
+        try {
+            broker.sellStocksToClient(order, amount, sum, paymentService, individualRepository, stockRepository, orderRepository);
+        } catch (Exception e) {
+            log.error(e.getMessage());
+        }
     }
 }
