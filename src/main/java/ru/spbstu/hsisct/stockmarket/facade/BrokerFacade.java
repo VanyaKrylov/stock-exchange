@@ -11,6 +11,7 @@ import ru.spbstu.hsisct.stockmarket.repository.OrderRepository;
 import ru.spbstu.hsisct.stockmarket.repository.StockRepository;
 import ru.spbstu.hsisct.stockmarket.service.PaymentService;
 
+import java.math.BigDecimal;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -56,5 +57,12 @@ public class BrokerFacade {
                 .stream()
                 .map(order -> OrderInfoDto.of(order, companyRepository.findById(order.getCompanyId()).orElseThrow()))
                 .collect(Collectors.toList());
+    }
+
+    public void buyStocksFromOrder(final Long brokerId, final Long orderId, final Long amount, final BigDecimal sum) {
+        var broker = brokerRepository.findById(brokerId).orElseThrow();
+        var order = orderRepository.findById(orderId).orElseThrow();
+        broker.buyClientStocks(order, amount, sum);
+
     }
 }

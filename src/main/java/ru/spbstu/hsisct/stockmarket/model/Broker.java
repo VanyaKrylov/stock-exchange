@@ -107,4 +107,8 @@ public class Broker {
                 .collect(Collectors.toList());
         //@formatter:on
     }
+
+    public void buyClientStocks(final Order order, final Long amount, final BigDecimal sum) {
+
+    }
 }

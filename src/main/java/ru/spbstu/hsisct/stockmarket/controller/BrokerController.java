@@ -18,6 +18,8 @@ import ru.spbstu.hsisct.stockmarket.facade.BrokerFacade;
 import ru.spbstu.hsisct.stockmarket.model.Broker;
 import ru.spbstu.hsisct.stockmarket.repository.BrokerRepository;
 
+import java.math.BigDecimal;
+
 @Slf4j
 @Controller
 @RequiredArgsConstructor
@@ -58,6 +60,17 @@ public class BrokerController {
 
         return "redirect:/broker/lk/" + brokerId;
     }
+
+    @PostMapping(value = "/lk/{brokerId}/manage-client-orders", consumes = "application/x-www-form-urlencoded", params = "buy")
+    public String buyPendingOrdersFromClients(@PathVariable("brokerId") @NonNull Long brokerId, OrderIdSizeAndPrice orderIdSizeAndPrice) {
+        brokerFacade.buyStocksFromOrder(brokerId, orderIdSizeAndPrice.getOrderId(), orderIdSizeAndPrice.getSize(), orderIdSizeAndPrice.getPrice());
+        return "redirect:/broker/lk/" + brokerId;
+    }
+
+    @PostMapping(value = "/lk/{brokerId}/manage-client-orders", consumes = "application/x-www-form-urlencoded", params = "sell")
+    public String sellToPendingOrdersFromClients(@PathVariable("brokerId") @NonNull Long brokerId, OrderIdSizeAndPrice orderIdSizeAndPrice) {
+        return "redirect:/broker/lk/" + brokerId;
+    }
 }
 
 @Data
@@ -66,4 +79,13 @@ public class BrokerController {
 class OrderIdAndSize {
     private Long id;
     private Long size;
+}
+
+@Data
+@NoArgsConstructor
+@AllArgsConstructor
+class OrderIdSizeAndPrice {
+    private Long orderId;
+    private Long size;
+    private BigDecimal price;
 }
