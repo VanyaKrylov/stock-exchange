@@ -7,6 +7,7 @@ import ru.spbstu.hsisct.stockmarket.dto.StockDto;
 import ru.spbstu.hsisct.stockmarket.model.Broker;
 import ru.spbstu.hsisct.stockmarket.repository.BrokerRepository;
 import ru.spbstu.hsisct.stockmarket.repository.CompanyRepository;
+import ru.spbstu.hsisct.stockmarket.repository.IndividualRepository;
 import ru.spbstu.hsisct.stockmarket.repository.OrderRepository;
 import ru.spbstu.hsisct.stockmarket.repository.StockRepository;
 import ru.spbstu.hsisct.stockmarket.service.PaymentService;
@@ -20,6 +21,7 @@ import java.util.stream.Collectors;
 public class BrokerFacade {
 
     private final BrokerRepository brokerRepository;
+    private final IndividualRepository individualRepository;
     private final StockRepository stockRepository;
     private final OrderRepository orderRepository;
     private final CompanyRepository companyRepository;
@@ -62,7 +64,6 @@ public class BrokerFacade {
     public void buyStocksFromOrder(final Long brokerId, final Long orderId, final Long amount, final BigDecimal sum) {
         var broker = brokerRepository.findById(brokerId).orElseThrow();
         var order = orderRepository.findById(orderId).orElseThrow();
-        broker.buyClientStocks(order, amount, sum);
-
+        broker.buyClientStocks(order, amount, sum, paymentService, individualRepository, stockRepository, orderRepository);
     }
 }

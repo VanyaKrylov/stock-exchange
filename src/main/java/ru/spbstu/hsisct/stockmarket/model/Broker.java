@@ -5,11 +5,10 @@ import lombok.NoArgsConstructor;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 import org.springframework.lang.Nullable;
-import ru.spbstu.hsisct.stockmarket.dto.OrderInfoDto;
 import ru.spbstu.hsisct.stockmarket.dto.StockDto;
-import ru.spbstu.hsisct.stockmarket.model.enums.OrderStatus;
 import ru.spbstu.hsisct.stockmarket.repository.BrokerRepository;
 import ru.spbstu.hsisct.stockmarket.repository.CompanyRepository;
+import ru.spbstu.hsisct.stockmarket.repository.IndividualRepository;
 import ru.spbstu.hsisct.stockmarket.repository.OrderRepository;
 import ru.spbstu.hsisct.stockmarket.repository.StockRepository;
 import ru.spbstu.hsisct.stockmarket.service.PaymentService;
@@ -99,7 +98,7 @@ public class Broker {
     public List<StockDto> getAllOwnedStocksGroupedByCompanies(final StockRepository stockRepository,
                                                               final CompanyRepository companyRepository) {
         //@formatter:off
-        return stockRepository.getAllBrokersStocksGrouped(this.id)
+        return stockRepository.findAllBrokersStocksGrouped(this.id)
                 .stream()
                 .map(s -> new StockDto(s.getAmount(),
                                        companyRepository.findById(s.getCompanyId()).orElseThrow(),
@@ -108,7 +107,28 @@ public class Broker {
         //@formatter:on
     }
 
-    public void buyClientStocks(final Order order, final Long amount, final BigDecimal sum) {
-
+    public void buyClientStocks(final Order order,
+                                final Long amount,
+                                final BigDecimal price,
+                                final PaymentService paymentService,
+                                final IndividualRepository individualRepository,
+                                final StockRepository stockRepository,
+                                final OrderRepository orderRepository) {
+        if (Objects.nonNull(order.getMinPrice()) && Objects.compare(order.getMinPrice(), price, BigDecimal::compareTo) >= 0 ) {
+            throw new IllegalArgumentException("Suggested price can't be lower than minimal order price");
+        }
+        assert order.getIndividualId() != null;
+        var individual = individualRepository.findById(order.getIndividualId()).orElseThrow();
+        var totalSum =
+                price
+                        .multiply(BigDecimal.valueOf(amount))
+                        .subtract(this.fee
+                                .multiply(BigDecimal.valueOf(amount))); // price * amount - (fee * amount)
+        paymentService.brokerToIndividualTransfer(this.bankAccountId, individual.getBankAccountId(), totalSum);
+        stockRepository.findAllIndividualsStocksForCompany(order.getIndividualId(), order.getCompanyId())
+                .subList(0, amount.intValue())
+                .forEach(stock -> individualRepository.deleteStock(order.getIndividualId(), stock.getId()));
+        order.setSize(order.getSize() - amount);
+        orderRepository.save(order);
     }
 }

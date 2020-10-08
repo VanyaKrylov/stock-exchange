@@ -20,6 +20,7 @@ public interface CompanyRepository extends CrudRepository<Company, Long> {
     """)
     void updateCapital(@Param("uuid") final UUID uuid, @Param("sum") final BigDecimal sum);
 
+    @SuppressWarnings("SpringDataRepositoryMethodReturnTypeInspection")
     @Query(value = """
         SELECT capital FROM company WHERE bank_account_id = :uuid
     """, nativeQuery = true)

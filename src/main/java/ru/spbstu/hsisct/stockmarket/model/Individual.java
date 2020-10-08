@@ -64,7 +64,7 @@ public class Individual {
     }
 
     public List<Stock> viewMarketStocks(final StockRepository stockRepository) {
-        return stockRepository.getAllUniqueStocks();
+        return stockRepository.findAllUniqueStocks();
     }
 
     public void createBuyOrder(final long companyId, final long amount, final OrderRepository orderRepository) {
@@ -100,13 +100,13 @@ public class Individual {
     }
 
     public List<Stock> getAllOwnedStocks(final StockRepository stockRepository) {
-        return stockRepository.getAllIndividualsStocks(this.id);
+        return stockRepository.findAllIndividualsStocks(this.id);
     }
 
     public List<StockDto> getAllOwnedStocksGroupedByCompanies(final StockRepository stockRepository,
                                                               final CompanyRepository companyRepository) {
         //@formatter:off
-        return stockRepository.getAllIndividualsStocksGrouped(this.id)
+        return stockRepository.findAllIndividualsStocksGrouped(this.id)
                 .stream()
                 .map(s -> new StockDto(s.getAmount(),
                                        companyRepository.findById(s.getCompanyId()).orElseThrow(),

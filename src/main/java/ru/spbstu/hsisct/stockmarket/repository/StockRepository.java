@@ -4,7 +4,6 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.CrudRepository;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
-import ru.spbstu.hsisct.stockmarket.dto.StockDto;
 import ru.spbstu.hsisct.stockmarket.model.Stock;
 
 import java.util.List;
@@ -15,13 +14,22 @@ public interface StockRepository extends CrudRepository<Stock, Long> {
     @Query(value = """
         SELECT * FROM stock WHERE id IN (SELECT MIN(id) FROM stock GROUP BY type, company_id)
     """, nativeQuery = true)
-    List<Stock> getAllUniqueStocks();
+    List<Stock> findAllUniqueStocks();
 
 
     @Query(value = """
         SELECT * FROM stock WHERE id IN (SELECT stock_id FROM individuals_stocks WHERE individual_id = :indivId AND active = true)
     """, nativeQuery = true)
-    List<Stock> getAllIndividualsStocks(@Param("indivId") final long indivId);
+    List<Stock> findAllIndividualsStocks(@Param("indivId") final long indivId);
+
+    @Query(value = """
+        SELECT * FROM stock 
+        WHERE id IN 
+            (SELECT stock_id FROM individuals_stocks 
+                WHERE individual_id = :indivId AND active = true)
+        AND company_id = :companyId
+    """, nativeQuery = true)
+    List<Stock> findAllIndividualsStocksForCompany(@Param("indivId") final long indivId, @Param("companyId") final long companyId);
 
     @Query(value = """
         SELECT count(*) as amount, s.company_id as \"companyId\", s.type as type FROM stock AS s
@@ -29,15 +37,17 @@ public interface StockRepository extends CrudRepository<Stock, Long> {
                 SELECT stock_id FROM individuals_stocks WHERE individual_id = :indivId AND active = true)
             GROUP BY s.type, s.company_id
     """, nativeQuery = true)
-    List<StockWithCount> getAllIndividualsStocksGrouped(@Param("indivId") long indivId);
+    List<StockWithCount> findAllIndividualsStocksGrouped(@Param("indivId") long indivId);
 
     @Query(value = """
         SELECT count(*) as amount, s.company_id as \"companyId\", s.type as type FROM stock AS s
             WHERE s.id IN (
                 SELECT stock_id FROM stocks_owners WHERE broker_id = :brokerId AND active = true)
+            AND s.id NOT IN (
+                SELECT stock_id FROM individuals_stocks WHERE active = true)
             GROUP BY s.type, s.company_id
     """, nativeQuery = true)
-    List<StockWithCount> getAllBrokersStocksGrouped(@Param("brokerId") long brokerId);
+    List<StockWithCount> findAllBrokersStocksGrouped(@Param("brokerId") long brokerId);
 
     @Query(value = """
         SELECT count(*) FROM stock AS s

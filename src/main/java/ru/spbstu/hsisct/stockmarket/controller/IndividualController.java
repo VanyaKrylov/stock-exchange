@@ -49,7 +49,7 @@ public class IndividualController {
     @GetMapping("lk/{userId}")
     public String getUserHomePage(@PathVariable("userId") @NonNull Long userId, Model model) {
         model.addAttribute("individual", individualRepository.findById(userId).orElseThrow());
-        model.addAttribute("stocks", stockRepository.getAllUniqueStocks());
+        model.addAttribute("stocks", stockRepository.findAllUniqueStocks());
         model.addAttribute("order", new OrderDto());
         model.addAttribute("companies", companyRepository.findAll());
         model.addAttribute("ownedOrders", individualFacade.getOwnedOrders(userId));
