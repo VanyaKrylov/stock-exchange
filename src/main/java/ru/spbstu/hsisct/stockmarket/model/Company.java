@@ -5,7 +5,6 @@ import lombok.NoArgsConstructor;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 import org.springframework.lang.Nullable;
-import ru.spbstu.hsisct.stockmarket.model.enums.OrderOperationType;
 import ru.spbstu.hsisct.stockmarket.model.enums.OrderStatus;
 import ru.spbstu.hsisct.stockmarket.model.enums.StockType;
 import ru.spbstu.hsisct.stockmarket.repository.OrderRepository;
@@ -21,10 +20,9 @@ import javax.persistence.Table;
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
+import java.util.List;
 import java.util.Objects;
 import java.util.UUID;
-import java.util.stream.Collectors;
-import java.util.stream.LongStream;
 
 import static ru.spbstu.hsisct.stockmarket.model.enums.OrderOperationType.SELL;
 
@@ -96,5 +94,9 @@ public class Company {
                 .isPublic(true)
                 .operationType(SELL)
                 .build();
+    }
+
+    public List<StockRepository.StockInfoWithoutCompany> getAllStocks(final StockRepository stockRepository) {
+        return stockRepository.findAllStocksForCompanyGroupedByType(this.id);
     }
 }

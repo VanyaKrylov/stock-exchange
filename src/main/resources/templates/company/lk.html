@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Company home page</title>
+</head>
+<body>
+<div>
+    <h3>Captial</h3>
+    <span id="capital" th:text="${'Current capital is:' + company.capital}"></span>
+    <br>
+</div>
+<div>
+    <h3>Stocks</h3>
+    <table>
+        <thead>
+        <tr>
+            <th>Type</th>
+            <th>Amount</th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr th:each="stock : ${stocks}">
+            <td th:text="${{stock.type}}">0</td>
+            <td th:text="${{stock.amount}}">0</td>
+        </tr>
+        </tbody>
+    </table>
+</div>
+<div>
+    <h3>Publish new stocks</h3>
+    <form action="#" th:action="@{/company/lk/__${company.id}__/publish-stocks}" th:object="${company}" method="post">
+        <select class="form-control" id="type" name="type">
+            <option value="COMMON">Common</option>
+            <option value="PREFERRED">Preferred</option>
+        </select>
+        <label for="size">Amount</label>
+        <input type="text" name="amount" id="size" placeholder="size">
+        <label for="price">Price</label>
+        <input type="text" name="price" id="price" placeholder="sum">
+        <button type="submit">Publish</button>
+    </form>
+</div>
+</body>
+</html>
