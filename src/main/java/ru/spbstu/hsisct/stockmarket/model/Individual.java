@@ -23,6 +23,9 @@ import javax.persistence.OneToOne;
 import javax.persistence.PrePersist;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
+import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.NotNull;
+import javax.validation.constraints.PositiveOrZero;
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.List;
@@ -33,25 +36,35 @@ import java.util.stream.Collectors;
 @Table(name = "individual")
 @Entity
 @NoArgsConstructor
-@RequiredArgsConstructor
 public class Individual {
 
     @Id
     @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "individual_gen")
     @SequenceGenerator(name = "individual_gen", sequenceName = "individual_id_seq", allocationSize = 1)
     private Long id;
-    @NonNull
+    @NotBlank(message = "Name can't be empty")
     private String name;
-    @NonNull
+    @NotBlank(message = "Surname can't be empty")
     private String surname;
-    @NonNull
+    @NotNull(message = "Broker can't be empty")
     @OneToOne(cascade = CascadeType.MERGE)
     @JoinColumn(name = "broker_id", referencedColumnName = "id")
     private Broker broker;
     @Nullable
     private UUID bankAccountId;
-    @NonNull
+    @NotNull(message = "Capital can't be empty")
+    @PositiveOrZero
     private BigDecimal capital;
+
+    public Individual(@NonNull @NotBlank(message = "Name can't be empty") String name,
+                      @NonNull @NotBlank(message = "Surname can't be empty") String surname,
+                      @NonNull @NotNull(message = "Broker can't be empty") Broker broker,
+                      @NonNull @NotNull(message = "Capital can't be empty") @PositiveOrZero BigDecimal capital) {
+        this.name = name;
+        this.surname = surname;
+        this.broker = broker;
+        this.capital = capital;
+    }
 
     @PrePersist
     private void onCreate() {

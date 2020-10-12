@@ -7,12 +7,13 @@
 <body>
 <div>
     <h3>Captial</h3>
-<form action="#" th:action="@{/user/lk/__${individual.id}__/add-money}" th:object="${individual}" method="post">
+<form action="#" th:action="@{/user/lk/__${individual.id}__/add-money}" th:object="${individualCapital}" method="post">
     <span id="capital" th:text="${'Current capital is:' + individual.capital}"></span>
     <br>
     <label for="sum">Add money</label>
     <input type="text" th:field="*{capital}" id="sum" placeholder="sum">
     <button type="submit">Submit</button>
+    <p th:if="${#fields.hasErrors('capital')}" th:errors="*{capital}">Capital Error</p>
 </form>
 </div>
 <h3>List of available stocks</h3>
@@ -49,13 +50,13 @@
 </table>
 <div>
     <h3>Create an order</h3>
-    <form action="#" th:action="@{/user/lk/__${individual.id}__/create-order}" th:object="${individual}" method="post">
+    <form action="#" th:action="@{/user/lk/__${individual.id}__/create-order}" th:object="${order}" method="post">
         <label for="size">Order size</label>
-        <input type="text" th:field="${order.size}" id="size" placeholder="size">
+        <input type="text" th:field="*{size}" id="size" placeholder="size">
         <label for="minPrice">Minimal price</label>
-        <input type="text" th:field="${order.minPrice}" id="minPrice" placeholder="sum">
+        <input type="text" th:field="*{minPrice}" id="minPrice" placeholder="sum">
         <label for="maxPrice">Maximal price</label>
-        <input type="text" th:field="${order.maxPrice}" id="maxPrice" placeholder="sum">
+        <input type="text" th:field="*{maxPrice}" id="maxPrice" placeholder="sum">
         <select th:field="*{id}" class="form-control" id="company" name="company">
             <option
                     th:each="company: ${companies}"
@@ -65,6 +66,11 @@
         </select>
         <input type="submit" name="buy" value="Create Buy order">
         <input type="submit" name="sell" value="Create Sell order">
+        <p th:if="${#fields.hasErrors('size')}" th:errors="*{size}">Size Error</p>
+        <p th:if="${#fields.hasErrors('minPrice')}" th:errors="*{minPrice}">MinPrice Error</p>
+        <p th:if="${#fields.hasErrors('maxPrice')}" th:errors="*{maxPrice}">MaxPrice Error</p>
+        <p th:if="${#fields.hasErrors('id')}" th:errors="*{id}">Id Error</p>
+        <p th:if="${errorMessage}" th:text="${errorMessage}">Error Message</p>
     </form>
 </div>
 <div>

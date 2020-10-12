@@ -1,15 +1,12 @@
 package ru.spbstu.hsisct.stockmarket.dto;
 
 import lombok.Data;
-import lombok.Getter;
 import lombok.NoArgsConstructor;
-import lombok.NonNull;
-import lombok.RequiredArgsConstructor;
-import lombok.Setter;
-import lombok.ToString;
 import org.springframework.lang.Nullable;
-import ru.spbstu.hsisct.stockmarket.model.Company;
 
+import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Positive;
+import javax.validation.constraints.PositiveOrZero;
 import java.math.BigDecimal;
 import java.util.Objects;
 
@@ -17,13 +14,17 @@ import java.util.Objects;
 @NoArgsConstructor
 public class OrderDto {
 
-    @NonNull
+    @NotNull(message = "Size can't be empty")
+    @Positive
     private Long size;
     @Nullable
+    @PositiveOrZero
     private BigDecimal minPrice;
     @Nullable
+    @PositiveOrZero
     private BigDecimal maxPrice;
-    @NonNull
+    @NotNull
+    @PositiveOrZero
     private Long id;
 
     public boolean isLimitedOrder() {

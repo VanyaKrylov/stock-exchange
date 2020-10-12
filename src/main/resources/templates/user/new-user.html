@@ -14,7 +14,6 @@
 <label for="capital">Money</label>
 <input type="text" th:field="*{capital}" id="capital" placeholder="Capital">
 <select th:field="*{broker.id}" class="form-control" id="broker" name="broker">
-    <option value="#" disabled="disabled" selected="selected">Select broker</option>
     <option
             th:each="broker: ${brokers}"
             th:value="${broker.id}"
@@ -22,6 +21,10 @@
     </option>
 </select>
 <button type="submit">Create</button>
+    <p th:if="${#fields.hasErrors('name')}" th:errors="*{name}">Name Error</p>
+    <p th:if="${#fields.hasErrors('surname')}" th:errors="*{surname}">Surname Error</p>
+    <p th:if="${#fields.hasErrors('capital')}" th:errors="*{capital}">Capital Error</p>
+    <p th:if="${#fields.hasErrors('broker.id')}" th:errors="*{broker.id}">Broker Error</p>
 </form>
 </body>
 </html>
