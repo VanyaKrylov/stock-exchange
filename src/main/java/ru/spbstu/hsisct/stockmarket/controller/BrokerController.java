@@ -14,6 +14,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 import ru.spbstu.hsisct.stockmarket.facade.BrokerFacade;
 import ru.spbstu.hsisct.stockmarket.model.Broker;
 import ru.spbstu.hsisct.stockmarket.repository.BrokerRepository;
@@ -28,7 +29,6 @@ import java.math.BigDecimal;
 
 @Slf4j
 @Controller
-@Validated
 @RequiredArgsConstructor
 @RequestMapping(value = "/broker")
 public class BrokerController {
@@ -37,15 +37,21 @@ public class BrokerController {
 
     @GetMapping("/new-broker")
     public String createNewBroker(Model model) {
-        model.addAttribute("broker", new Broker());
+        if (!model.containsAttribute("broker")) {
+            model.addAttribute("broker", new Broker());
+        }
 
         return "broker/new-broker";
     }
 
     @PostMapping(value = "/add-broker", consumes = "application/x-www-form-urlencoded")
-    public String addNewBroker(@Valid Broker broker, BindingResult bindingResult) {
+    public String addNewBroker(@Valid Broker broker, BindingResult bindingResult, RedirectAttributes redirectAttributes) {
         if (bindingResult.hasErrors()) {
-            return "broker/new-broker";
+            redirectAttributes.getFlashAttributes().clear();
+            redirectAttributes.addFlashAttribute("org.springframework.validation.BindingResult.broker", bindingResult);
+            redirectAttributes.addFlashAttribute("broker", broker);
+
+            return "redirect:/broker/new-broker";
         }
         var brokerEntity = brokerRepository.save(broker);
 
@@ -59,33 +65,69 @@ public class BrokerController {
         model.addAttribute("orderCompany", new OrderIdAndSize());
         model.addAttribute("ownedStocks", brokerFacade.getOwnedStocks(brokerId));
         model.addAttribute("clientsOrders", brokerFacade.getAllClientsOrders(brokerId));
+        if (!model.containsAttribute("orderIdAndSize")) {
+            model.addAttribute("orderIdAndSize", new OrderIdAndSize());
+        }
+        if (!model.containsAttribute("orderIdSizeAndPrice")) {
+            model.addAttribute("orderIdSizeAndPrice", new OrderIdSizeAndPrice());
+        }
 
         return "broker/lk";
     }
 
     @PostMapping(value = "/lk/{brokerId}/buy-company-stocks", consumes = "application/x-www-form-urlencoded")
-    public String addCompanyStocks(@PathVariable("brokerId") @NonNull Long brokerId, @Valid final OrderIdAndSize orderIdAndSize) {
+    public String addCompanyStocks(@PathVariable("brokerId") long brokerId,
+                                   @Valid final OrderIdAndSize orderIdAndSize,
+                                   BindingResult bindingResult,
+                                   RedirectAttributes redirectAttributes) {
+        if (bindingResult.hasErrors()) {
+            redirectAttributes.getFlashAttributes().clear();
+            redirectAttributes.addFlashAttribute("org.springframework.validation.BindingResult.orderIdAndSize", bindingResult);
+            redirectAttributes.addFlashAttribute("orderIdAndSize", orderIdAndSize);
+
+            return "redirect:/broker/lk/" + brokerId;
+        }
         brokerFacade.addStocks(brokerId, orderIdAndSize.getId(), orderIdAndSize.getSize());
 
         return "redirect:/broker/lk/" + brokerId;
     }
 
     @PostMapping(value = "/lk/{brokerId}/manage-client-orders", consumes = "application/x-www-form-urlencoded", params = "buy")
-    public String buyPendingOrdersFromClients(@PathVariable("brokerId") @NonNull Long brokerId, @Valid OrderIdSizeAndPrice orderIdSizeAndPrice) {
+    public String buyPendingOrdersFromClients(@PathVariable("brokerId") long brokerId,
+                                              @Valid OrderIdSizeAndPrice orderIdSizeAndPrice,
+                                              BindingResult bindingResult,
+                                              RedirectAttributes redirectAttributes) {
+        if (bindingResult.hasErrors()) {
+            redirectAttributes.getFlashAttributes().clear();
+            redirectAttributes.addFlashAttribute("org.springframework.validation.BindingResult.orderIdSizeAndPrice", bindingResult);
+            redirectAttributes.addFlashAttribute("orderIdSizeAndPrice", orderIdSizeAndPrice);
+
+            return "redirect:/broker/lk/" + brokerId;
+        }
         brokerFacade.buyStocksFromOrder(brokerId, orderIdSizeAndPrice.getOrderId(), orderIdSizeAndPrice.getSize(), orderIdSizeAndPrice.getPrice());
 
         return "redirect:/broker/lk/" + brokerId;
     }
 
     @PostMapping(value = "/lk/{brokerId}/manage-client-orders", consumes = "application/x-www-form-urlencoded", params = "sell")
-    public String sellToPendingOrdersFromClients(@PathVariable("brokerId") @NonNull Long brokerId, @Valid OrderIdSizeAndPrice orderIdSizeAndPrice) {
+    public String sellToPendingOrdersFromClients(@PathVariable("brokerId") long brokerId,
+                                                 @Valid OrderIdSizeAndPrice orderIdSizeAndPrice,
+                                                 BindingResult bindingResult,
+                                                 RedirectAttributes redirectAttributes) {
+        if (bindingResult.hasErrors()) {
+            redirectAttributes.getFlashAttributes().clear();
+            redirectAttributes.addFlashAttribute("org.springframework.validation.BindingResult.orderIdSizeAndPrice", bindingResult);
+            redirectAttributes.addFlashAttribute("orderIdSizeAndPrice", orderIdSizeAndPrice);
+
+            return "redirect:/broker/lk/" + brokerId;
+        }
         brokerFacade.sellStocksForOrder(brokerId, orderIdSizeAndPrice.getOrderId(), orderIdSizeAndPrice.getSize(), orderIdSizeAndPrice.getPrice());
 
         return "redirect:/broker/lk/" + brokerId;
     }
 
     @PostMapping(value = "/lk/{brokerId}/publish-client-orders", consumes = "application/x-www-form-urlencoded")
-    public String publishClientOrder(@PathVariable("brokerId") @NonNull Long brokerId, @Min(0) long orderId) {
+    public String publishClientOrder(@PathVariable("brokerId") long brokerId, @Min(0) long orderId) {
         brokerFacade.publishOrder(brokerId, orderId);
 
         return "redirect:/broker/lk/" + brokerId;

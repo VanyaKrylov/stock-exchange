@@ -19,6 +19,7 @@ import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 import javax.validation.constraints.DecimalMin;
 import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.NotNull;
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
@@ -32,7 +33,6 @@ import static ru.spbstu.hsisct.stockmarket.model.enums.OrderOperationType.SELL;
 @Entity
 @Table(name = "company")
 @NoArgsConstructor
-@RequiredArgsConstructor
 public class Company {
 
     @Id
@@ -44,9 +44,16 @@ public class Company {
     private String name;
     @Nullable
     private UUID bankAccountId;
+    @NotNull
     @NonNull
     @DecimalMin(value = "0")
     private BigDecimal capital;
+
+    public Company(@NotBlank(message = "Company name can't be empty") String name,
+                   @NotNull @DecimalMin(value = "0") BigDecimal capital) {
+        this.name = name;
+        this.capital = capital;
+    }
 
     @PrePersist
     private void onCreate() {

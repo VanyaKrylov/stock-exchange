@@ -35,26 +35,30 @@ import static ru.spbstu.hsisct.stockmarket.model.enums.OrderStatus.CLOSED;
 @Entity
 @Table(name = "broker")
 @NoArgsConstructor
-@RequiredArgsConstructor
 public class Broker {
 
     @Id
     @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "broker_gen")
     @SequenceGenerator(name = "broker_gen", sequenceName = "broker_id_seq", allocationSize = 1)
     private Long id;
-    @NonNull
     @NotBlank(message = "Broker name can not be empty")
     private String name;
     @Nullable
     private UUID bankAccountId;
-    @NonNull
     @NotNull(message = "Fee can't be empty")
     @DecimalMin(value = "0.0", inclusive = false)
     private BigDecimal fee;
-    @NonNull
     @NotNull(message = "Capital can't be empty")
     @DecimalMin(value = "0.0")
     private BigDecimal capital;
+
+    public Broker(@NotBlank(message = "Broker name can not be empty") String name,
+                  @NotNull(message = "Fee can't be empty") @DecimalMin(value = "0.0", inclusive = false) BigDecimal fee,
+                  @NotNull(message = "Capital can't be empty") @DecimalMin(value = "0.0") BigDecimal capital) {
+        this.name = name;
+        this.fee = fee;
+        this.capital = capital;
+    }
 
     @PrePersist
     private void onCreate() {

@@ -9,14 +9,14 @@
 <form action="#" th:action="@{/broker/add-broker}" th:object="${broker}" method="post">
     <label for="name">Name</label>
     <input type="text" th:field="*{name}" id="name" placeholder="Name">
-    <p th:if="${#fields.hasErrors('name')}" th:errors="*{name}">Name Error</p>
     <label for="fee">Fee</label>
     <input type="text" th:field="*{fee}" id="fee" placeholder="sum">
-    <p th:if="${#fields.hasErrors('fee')}" th:errors="*{fee}">Fee Error</p>
     <label for="capital">Capital</label>
     <input type="text" th:field="*{capital}" id="capital" placeholder="sum">
-    <p th:if="${#fields.hasErrors('capital')}" th:errors="*{capital}">Capital Error</p>
     <button type="submit">Create</button>
+    <p th:if="${#fields.hasErrors('name')}" th:errors="*{name}">Name Error</p>
+    <p th:if="${#fields.hasErrors('fee')}" th:errors="*{fee}">Fee Error</p>
+    <p th:if="${#fields.hasErrors('capital')}" th:errors="*{capital}">Capital Error</p>
 </form>
 </body>
 </html>

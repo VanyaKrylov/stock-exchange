@@ -33,12 +33,14 @@
 </div>
 <div>
     <h3>Buy company stocks</h3>
-    <form action="#" th:action="@{/broker/lk/__${broker.id}__/buy-company-stocks}" th:object="${broker}" method="post">
+    <form action="#" th:action="@{/broker/lk/__${broker.id}__/buy-company-stocks}" th:object="${orderIdAndSize}" method="post">
         <label for="id">Order id</label>
-        <input type="text" th:field="${orderCompany.id}" id="id" placeholder="id">
+        <input type="text" th:field="*{id}" id="id" placeholder="id">
         <label for="size">Amount</label>
-        <input type="text" th:field="${orderCompany.size}" id="size" placeholder="size">
+        <input type="text" th:field="*{size}" id="size" placeholder="size">
         <button type="submit">Buy</button>
+        <p th:if="${#fields.hasErrors('id')}" th:errors="*{id}">Id Error</p>
+        <p th:if="${#fields.hasErrors('size')}" th:errors="*{size}">Size Error</p>
     </form>
 </div>
 <div>
@@ -89,15 +91,18 @@
 </div>
 <div>
     <h3>Manage clients orders</h3>
-    <form action="#" th:action="@{/broker/lk/__${broker.id}__/manage-client-orders}" th:object="${broker}" method="post">
+    <form action="#" th:action="@{/broker/lk/__${broker.id}__/manage-client-orders}" th:object="${orderIdSizeAndPrice}" method="post">
         <label for="idd">Order id</label>
-        <input type="text" name="orderId" id="idd" placeholder="id">
+        <input type="text" th:field="*{orderId}" name="orderId" id="idd" placeholder="id">
         <label for="amount">Amount</label>
-        <input type="text" name="size" id="amount" placeholder="size">
+        <input type="text" th:field="*{size}" name="size" id="amount" placeholder="size">
         <label for="price">Price</label>
-        <input type="text" name="price" id="price" placeholder="sum">
+        <input type="text" th:field="*{price}" name="price" id="price" placeholder="sum">
         <input type="submit" name="buy" value="Buy orders">
         <input type="submit" name="sell" value="Sell orders">
+        <p th:if="${#fields.hasErrors('orderId')}" th:errors="*{orderId}">Id Error</p>
+        <p th:if="${#fields.hasErrors('size')}" th:errors="*{size}">Size Error</p>
+        <p th:if="${#fields.hasErrors('price')}" th:errors="*{price}">Price Error</p>
     </form>
     <form action="#" th:action="@{/broker/lk/__${broker.id}__/publish-client-orders}" th:object="${broker}" method="post">
         <label for="idd">Order id</label>
