@@ -20,6 +20,9 @@ import javax.persistence.Id;
 import javax.persistence.PrePersist;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
+import javax.validation.constraints.DecimalMin;
+import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.NotNull;
 import java.math.BigDecimal;
 import java.util.List;
 import java.util.Objects;
@@ -40,12 +43,17 @@ public class Broker {
     @SequenceGenerator(name = "broker_gen", sequenceName = "broker_id_seq", allocationSize = 1)
     private Long id;
     @NonNull
+    @NotBlank(message = "Broker name can not be empty")
     private String name;
     @Nullable
     private UUID bankAccountId;
     @NonNull
+    @NotNull(message = "Fee can't be empty")
+    @DecimalMin(value = "0.0", inclusive = false)
     private BigDecimal fee;
     @NonNull
+    @NotNull(message = "Capital can't be empty")
+    @DecimalMin(value = "0.0")
     private BigDecimal capital;
 
     @PrePersist
@@ -72,12 +80,16 @@ public class Broker {
     }
 
     public void buyCompanyStocks(final long amount,
-                                 final Order order,
+                                 final Long orderId,
                                  final BrokerRepository brokerRepository,
                                  final OrderRepository orderRepository,
                                  final CompanyRepository companyRepository,
                                  final StockRepository stockRepository,
                                  final PaymentService paymentService) {
+        assert amount > 0;
+        assert orderId >= 0;
+        var order = orderRepository.findById(orderId).orElseThrow();
+        assert Objects.nonNull(order.getMinPrice());
         assert order.isPublishedByCompany();
         assert order.getSize() >= amount;
 
@@ -107,17 +119,22 @@ public class Broker {
         //@formatter:on
     }
 
-    public void buyClientStocks(final Order order,
+    public void buyClientStocks(final Long orderId,
                                 final Long amount,
                                 final BigDecimal price,
                                 final PaymentService paymentService,
                                 final IndividualRepository individualRepository,
                                 final StockRepository stockRepository,
                                 final OrderRepository orderRepository) {
+        assert orderId >= 0;
+        assert amount > 0;
+        assert price.signum() >= 0;
+        var order = orderRepository.findById(orderId).orElseThrow();
         if (Objects.nonNull(order.getMinPrice()) && Objects.compare(order.getMinPrice(), price, BigDecimal::compareTo) >= 0 ) {
             throw new IllegalArgumentException("Suggested price can't be lower than minimal order price");
         }
         assert order.getIndividualId() != null;
+
         var individual = individualRepository.findById(order.getIndividualId()).orElseThrow();
         var totalSum =
                 price
@@ -132,19 +149,24 @@ public class Broker {
         orderRepository.save(order);
     }
 
-    public void sellStocksToClient(final Order order,
+    public void sellStocksToClient(final Long orderId,
                                    final Long amount,
                                    final BigDecimal price,
                                    final PaymentService paymentService,
                                    final IndividualRepository individualRepository,
                                    final StockRepository stockRepository,
                                    final OrderRepository orderRepository) {
+        assert orderId >= 0;
+        assert amount > 0;
+        assert price.signum() >= 0;
+        var order = orderRepository.findById(orderId).orElseThrow();
         assert order.getBrokerId() != null;
         var brokerStocksForGivenCompany = stockRepository.findAllBrokerStocksForCompany(order.getBrokerId(), order.getCompanyId());
         if (brokerStocksForGivenCompany.size() < amount) {
             throw new IllegalArgumentException("Not enough stocks of that type are owned by broker");
         }
         assert order.getIndividualId() != null;
+
         var individual = individualRepository.findById(order.getIndividualId()).orElseThrow();
         var totalSum =
                 price
@@ -158,6 +180,8 @@ public class Broker {
     }
 
     public void publishOrder(final Long orderId, final OrderRepository orderRepository) {
+        assert  orderId >= 0;
+
         var order = orderRepository.findById(orderId).orElseThrow();
         order.setPublic(true);
         orderRepository.save(order);

@@ -21,7 +21,6 @@ import java.util.stream.Collectors;
 @Service
 @RequiredArgsConstructor
 public class BrokerFacade {
-
     private final BrokerRepository brokerRepository;
     private final IndividualRepository individualRepository;
     private final StockRepository stockRepository;
@@ -44,9 +43,8 @@ public class BrokerFacade {
 
     public void addStocks(final Long brokerId, final Long orderId, final Long size) {
         var broker = brokerRepository.findById(brokerId).orElseThrow();
-        var order = orderRepository.findById(orderId).orElseThrow();
         try {
-            broker.buyCompanyStocks(size, order, brokerRepository, orderRepository, companyRepository, stockRepository, paymentService);
+            broker.buyCompanyStocks(size, orderId, brokerRepository, orderRepository, companyRepository, stockRepository, paymentService);
         } catch (Exception e) {
             log.error(e.getMessage());
         }
@@ -69,9 +67,8 @@ public class BrokerFacade {
 
     public void buyStocksFromOrder(final Long brokerId, final Long orderId, final Long amount, final BigDecimal sum) {
         var broker = brokerRepository.findById(brokerId).orElseThrow();
-        var order = orderRepository.findById(orderId).orElseThrow();
         try {
-            broker.buyClientStocks(order, amount, sum, paymentService, individualRepository, stockRepository, orderRepository);
+            broker.buyClientStocks(orderId, amount, sum, paymentService, individualRepository, stockRepository, orderRepository);
         } catch (Exception e) {
             log.error(e.getMessage());
         }
@@ -79,9 +76,8 @@ public class BrokerFacade {
 
     public void sellStocksForOrder(final Long brokerId, final Long orderId, final Long amount, final BigDecimal sum) {
         var broker = brokerRepository.findById(brokerId).orElseThrow();
-        var order = orderRepository.findById(orderId).orElseThrow();
         try {
-            broker.sellStocksToClient(order, amount, sum, paymentService, individualRepository, stockRepository, orderRepository);
+            broker.sellStocksToClient(orderId, amount, sum, paymentService, individualRepository, stockRepository, orderRepository);
         } catch (Exception e) {
             log.error(e.getMessage());
         }

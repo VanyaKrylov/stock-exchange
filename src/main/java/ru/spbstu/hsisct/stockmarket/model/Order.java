@@ -73,6 +73,7 @@ public class Order {
         return Objects.nonNull(minPrice) && Objects.nonNull(maxPrice);
     }
 
+    @Nullable
     public BigDecimal getMinPrice() {
         /*if (!isLimitedOrder()) {
             throw new UnsupportedOperationException("Not a limited order");
@@ -81,6 +82,7 @@ public class Order {
         return minPrice;
     }
 
+    @Nullable
     public BigDecimal getMaxPrice() {
         /*if (!isLimitedOrder()) {
             throw new  UnsupportedOperationException("Not a limited order");

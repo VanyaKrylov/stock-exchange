@@ -1,6 +1,5 @@
 package ru.spbstu.hsisct.stockmarket.repository;
 
-import org.springframework.lang.Nullable;
 import ru.spbstu.hsisct.stockmarket.model.Order;
 
 import java.util.List;

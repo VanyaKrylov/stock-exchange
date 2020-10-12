@@ -29,16 +29,19 @@
 </div>
 <div>
     <h3>Publish new stocks</h3>
-    <form action="#" th:action="@{/company/lk/__${company.id}__/publish-stocks}" th:object="${company}" method="post">
-        <select class="form-control" id="type" name="type">
+    <form action="#" th:action="@{/company/lk/__${company.id}__/publish-stocks}" th:object="${stockDto}" method="post">
+        <select class="form-control" th:field="*{type}" id="type" name="type">
             <option value="COMMON">Common</option>
             <option value="PREFERRED">Preferred</option>
         </select>
         <label for="size">Amount</label>
-        <input type="text" name="amount" id="size" placeholder="size">
+        <input type="text" th:field="*{amount}" name="amount" id="size" placeholder="size">
         <label for="price">Price</label>
-        <input type="text" name="price" id="price" placeholder="sum">
-        <button type="submit">Publish</button>
+        <input type="text" th:field="*{price}" name="price" id="price" placeholder="sum">
+        <button type="submit">Publish</button><br>
+        <p th:if="${#fields.hasErrors('type')}" th:errors="*{type}">Type Error</p>
+        <p th:if="${#fields.hasErrors('amount')}" th:errors="*{amount}">Amount Error</p>
+        <p th:if="${#fields.hasErrors('price')}" th:errors="*{price}">price Error</p>
     </form>
 </div>
 </body>

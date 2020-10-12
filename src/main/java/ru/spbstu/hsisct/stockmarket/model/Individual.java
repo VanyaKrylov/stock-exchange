@@ -58,16 +58,21 @@ public class Individual {
         bankAccountId = UUID.randomUUID();
     }
 
-    public Individual addMoney(final BigDecimal money, IndividualRepository individualRepository) {
+    public void addMoney(final BigDecimal money, IndividualRepository individualRepository) {
+        assert money.signum() > 0;
+
         capital = capital.add(money);
-        return individualRepository.save(this);
+        individualRepository.save(this);
     }
 
     public List<Stock> viewMarketStocks(final StockRepository stockRepository) {
         return stockRepository.findAllUniqueStocks();
     }
 
-    public void createBuyOrder(final long companyId, final long amount, final OrderRepository orderRepository) {
+    public void createMarketBuyOrder(final long companyId, final long amount, final OrderRepository orderRepository) {
+        assert amount > 0;
+        assert companyId >= 0;
+
         var order = constructOrder(amount, companyId, OrderOperationType.BUY);
         orderRepository.save(order);
     }
@@ -77,6 +82,12 @@ public class Individual {
                                       final BigDecimal minPrice,
                                       final BigDecimal maxPrice,
                                       final OrderRepository orderRepository) {
+        assert amount > 0;
+        assert companyId >= 0;
+        assert minPrice.signum() >= 0;
+        assert maxPrice.signum() >= 0;
+        assert minPrice.compareTo(maxPrice) <= 0;
+
         var order = constructOrder(amount, companyId, OrderOperationType.BUY);
         order.setMinPrice(minPrice);
         order.setMaxPrice(maxPrice);
@@ -84,6 +95,9 @@ public class Individual {
     }
 
     public void createSellOrder(final long companyId, final long amount, final OrderRepository orderRepository) {
+        assert amount > 0;
+        assert companyId >= 0;
+
         var order = constructOrder(amount, companyId, OrderOperationType.SELL);
         orderRepository.save(order);
     }
@@ -93,6 +107,12 @@ public class Individual {
                                        final BigDecimal minPrice,
                                        final BigDecimal maxPrice,
                                        final OrderRepository orderRepository) {
+        assert amount > 0;
+        assert companyId >= 0;
+        assert minPrice.signum() >= 0;
+        assert maxPrice.signum() >= 0;
+        assert minPrice.compareTo(maxPrice) <= 0;
+
         var order = constructOrder(amount, companyId, OrderOperationType.SELL);
         order.setMinPrice(minPrice);
         order.setMaxPrice(maxPrice);
@@ -120,6 +140,9 @@ public class Individual {
     }
 
     private Order constructOrder(final long amount, final long companyId, final OrderOperationType operationType) {
+        assert amount > 0;
+        assert companyId >= 0;
+
         return Order.builder()
                 .size(amount)
                 .brokerId(this.broker.getId())
@@ -133,6 +156,20 @@ public class Individual {
     }
 
     public void deleteOrder(final Long orderId, final OrderRepository orderRepository) {
+        assert orderId >= 0;
+
         orderRepository.deleteById(orderId);
+    }
+
+    public void deleteAccount(final Long individualId,
+                              final IndividualRepository individualRepository,
+                              final OrderRepository orderRepository) {
+        assert individualId >= 0;
+
+        individualRepository.deleteById(individualId);
+        orderRepository.findClientsOrders(individualId)
+                .stream()
+                .map(Order::getId)
+                .forEach(orderRepository::deleteById);
     }
 }

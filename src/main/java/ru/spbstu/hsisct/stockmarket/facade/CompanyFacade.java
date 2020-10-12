@@ -7,16 +7,12 @@ import ru.spbstu.hsisct.stockmarket.repository.CompanyRepository;
 import ru.spbstu.hsisct.stockmarket.repository.OrderRepository;
 import ru.spbstu.hsisct.stockmarket.repository.StockRepository;
 
-import java.beans.BeanDescriptor;
 import java.math.BigDecimal;
 import java.util.List;
 
 @Service
 @RequiredArgsConstructor
 public class CompanyFacade {
-
-    /*public List<Investor> getInvestors(Long companyId) {
-    }*/
     private final CompanyRepository companyRepository;
     private final StockRepository stockRepository;
     private final OrderRepository orderRepository;

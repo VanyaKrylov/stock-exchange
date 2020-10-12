@@ -11,6 +11,8 @@
     <label for="capital">Capital</label>
     <input type="text" th:field="*{capital}" id="capital" placeholder="sum">
     <button type="submit">Create</button>
+    <p th:if="${#fields.hasErrors('name')}" th:errors="*{name}">Name Error</p>
+    <p th:if="${#fields.hasErrors('capital')}" th:errors="*{capital}">Capital Error</p>
 </form>
 </body>
 </html>

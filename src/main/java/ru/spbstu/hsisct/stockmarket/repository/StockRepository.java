@@ -4,8 +4,6 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.CrudRepository;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
-import org.springframework.web.bind.annotation.PathVariable;
-import ru.spbstu.hsisct.stockmarket.dto.StockDto;
 import ru.spbstu.hsisct.stockmarket.model.Stock;
 
 import java.util.List;
@@ -77,6 +75,7 @@ public interface StockRepository extends CrudRepository<Stock, Long> {
     """, nativeQuery = true)
     List<Stock> findNotOwnedStocks(@Param("companyId") Long companyId);
 
+    @SuppressWarnings("SpringDataRepositoryMethodReturnTypeInspection")
     @Query(value = """
         SELECT COUNT(*) AS amount, s.type AS type FROM stock AS s WHERE company_id = :companyId GROUP BY s.type
     """, nativeQuery = true)

@@ -17,6 +17,8 @@ import javax.persistence.Id;
 import javax.persistence.PrePersist;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
+import javax.validation.constraints.DecimalMin;
+import javax.validation.constraints.NotBlank;
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
@@ -38,10 +40,12 @@ public class Company {
     @SequenceGenerator(name = "company_gen", sequenceName = "company_id_seq", allocationSize = 1)
     private Long id;
     @NonNull
+    @NotBlank(message = "Company name can't be empty")
     private String name;
     @Nullable
     private UUID bankAccountId;
     @NonNull
+    @DecimalMin(value = "0")
     private BigDecimal capital;
 
     @PrePersist
@@ -53,6 +57,9 @@ public class Company {
                                     final BigDecimal price,
                                     final StockRepository stockRepository,
                                     final OrderRepository orderRepository) {
+        assert amount > 0;
+        assert price.signum() >= 0;
+
         publishStocks(amount, price, StockType.COMMON, stockRepository, orderRepository);
     }
 
@@ -60,18 +67,19 @@ public class Company {
                                        final BigDecimal price,
                                        final StockRepository stockRepository,
                                        final OrderRepository orderRepository) {
+        assert amount > 0;
+        assert price.signum() >= 0;
+
         publishStocks(amount, price, StockType.PREFERRED, stockRepository, orderRepository);
     }
-
-    /*public long countStocks(final StockRepository stockRepository) {
-        stockRepository
-    }*/
 
     private void publishStocks(final long amount,
                                final BigDecimal price,
                                StockType stockType,
                                final StockRepository stockRepository,
                                final OrderRepository orderRepository) {
+        assert amount > 0;
+        assert price.signum() >= 0;
         assert Objects.nonNull(id);
 
         final var stocks = new ArrayList<Stock>();
@@ -84,6 +92,9 @@ public class Company {
     }
 
     private Order constructOrder(final long amount, final BigDecimal price) {
+        assert amount > 0;
+        assert price.signum() >= 0;
+
         return Order.builder()
                 .size(amount)
                 .companyId(this.id)

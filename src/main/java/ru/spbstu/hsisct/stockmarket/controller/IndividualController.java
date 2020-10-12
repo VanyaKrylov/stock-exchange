@@ -90,7 +90,6 @@ public class IndividualController {
     @SuppressWarnings("SpringMVCViewInspection")
     @PostMapping("lk/{userId}/delete-account")
     public String deleteAccount(@PathVariable("userId") @NonNull Long userId) {
-        log.info(userId.toString());
         individualFacade.deleteAccount(userId);
         return "redirect:/";
     }
