@@ -60,7 +60,19 @@ public class Company {
         bankAccountId = UUID.randomUUID();
     }
 
-    public void publishCommonStocks(final long amount,
+    public void publishStocks(final String type,
+                              final long amount,
+                              final BigDecimal price,
+                              final StockRepository stockRepository,
+                              final OrderRepository orderRepository) {
+        if (type.equalsIgnoreCase("common")) {
+            publishCommonStocks(amount, price, stockRepository, orderRepository);
+        } else {
+            publishPreferredStocks(amount, price, stockRepository, orderRepository);
+        }
+    }
+
+    private void publishCommonStocks(final long amount,
                                     final BigDecimal price,
                                     final StockRepository stockRepository,
                                     final OrderRepository orderRepository) {
@@ -70,7 +82,7 @@ public class Company {
         publishStocks(amount, price, StockType.COMMON, stockRepository, orderRepository);
     }
 
-    public void publishPreferredStocks(final long amount,
+    private void publishPreferredStocks(final long amount,
                                        final BigDecimal price,
                                        final StockRepository stockRepository,
                                        final OrderRepository orderRepository) {

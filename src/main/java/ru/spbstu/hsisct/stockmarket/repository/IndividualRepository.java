@@ -9,6 +9,7 @@ import org.springframework.transaction.annotation.Transactional;
 import ru.spbstu.hsisct.stockmarket.model.Individual;
 
 import java.math.BigDecimal;
+import java.util.Optional;
 import java.util.UUID;
 
 @Repository
@@ -39,5 +40,5 @@ public interface IndividualRepository extends CrudRepository<Individual, Long> {
     @Query(value = """
         SELECT capital FROM individual WHERE bank_account_id = :uuid   
     """, nativeQuery = true)
-    BigDecimal findCapitalByBankAccountId(@Param("uuid") final UUID uuid);
+    Optional<BigDecimal> findCapitalByBankAccountId(@Param("uuid") final UUID uuid);
 }

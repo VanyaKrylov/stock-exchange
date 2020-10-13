@@ -87,7 +87,12 @@ public class BrokerController {
 
             return "redirect:/broker/lk/" + brokerId;
         }
-        brokerFacade.addStocks(brokerId, orderIdAndSize.getId(), orderIdAndSize.getSize());
+        try {
+            brokerFacade.addStocks(brokerId, orderIdAndSize.getId(), orderIdAndSize.getSize());
+        } catch (Exception e) {
+            redirectAttributes.getFlashAttributes().clear();
+            redirectAttributes.addFlashAttribute("errorMessage", e.getMessage());
+        }
 
         return "redirect:/broker/lk/" + brokerId;
     }

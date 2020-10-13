@@ -24,11 +24,7 @@ public class CompanyFacade {
 
     public void createNewStocks(final Long companyId, final String type, final Long amount, final BigDecimal price) {
         var company = companyRepository.findById(companyId).orElseThrow();
-        if (type.equalsIgnoreCase("common")) {
-            company.publishCommonStocks(amount, price, stockRepository, orderRepository);
-        } else {
-            company.publishPreferredStocks(amount, price, stockRepository, orderRepository);
-        }
+        company.publishStocks(type, amount, price, stockRepository, orderRepository);
     }
 
     @Data

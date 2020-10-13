@@ -3,7 +3,6 @@ package ru.spbstu.hsisct.stockmarket.model;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.NonNull;
-import lombok.RequiredArgsConstructor;
 import org.springframework.lang.Nullable;
 import ru.spbstu.hsisct.stockmarket.dto.StockDto;
 import ru.spbstu.hsisct.stockmarket.model.enums.OrderOperationType;
@@ -29,6 +28,7 @@ import javax.validation.constraints.PositiveOrZero;
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Objects;
 import java.util.UUID;
 import java.util.stream.Collectors;
 
@@ -78,11 +78,19 @@ public class Individual {
         individualRepository.save(this);
     }
 
-    public List<Stock> viewMarketStocks(final StockRepository stockRepository) {
-        return stockRepository.findAllUniqueStocks();
+    public void createBuyOrder(final long companyId,
+                               final long amount,
+                               @Nullable final BigDecimal minPrice,
+                               @Nullable final BigDecimal maxPrice,
+                               final OrderRepository orderRepository) {
+        if (Objects.nonNull(minPrice) && Objects.nonNull(maxPrice)) {
+            createLimitedBuyOrder(companyId, amount, minPrice, maxPrice, orderRepository);
+        } else {
+            createMarketBuyOrder(companyId, amount, orderRepository);
+        }
     }
 
-    public void createMarketBuyOrder(final long companyId, final long amount, final OrderRepository orderRepository) {
+    private void createMarketBuyOrder(final long companyId, final long amount, final OrderRepository orderRepository) {
         assert amount > 0;
         assert companyId >= 0;
 
@@ -90,11 +98,11 @@ public class Individual {
         orderRepository.save(order);
     }
 
-    public void createLimitedBuyOrder(final long companyId,
-                                      final long amount,
-                                      final BigDecimal minPrice,
-                                      final BigDecimal maxPrice,
-                                      final OrderRepository orderRepository) {
+    private void createLimitedBuyOrder(final long companyId,
+                                       final long amount,
+                                       final BigDecimal minPrice,
+                                       final BigDecimal maxPrice,
+                                       final OrderRepository orderRepository) {
         assert amount > 0;
         assert companyId >= 0;
         assert minPrice.signum() >= 0;
@@ -107,7 +115,32 @@ public class Individual {
         orderRepository.save(order);
     }
 
-    public void createSellOrder(final long companyId, final long amount, final OrderRepository orderRepository) {
+    public void createSellOrder(final long companyId,
+                                final long amount,
+                                @Nullable final BigDecimal minPrice,
+                                @Nullable final BigDecimal maxPrice,
+                                final OrderRepository orderRepository,
+                                final StockRepository stockRepository) {
+        validateSufficiencyForSellOrder(id, companyId, amount, stockRepository);
+
+        if (Objects.nonNull(minPrice) && Objects.nonNull(maxPrice)) {
+            createLimitedSellOrder(companyId, amount, minPrice, maxPrice, orderRepository);
+        } else {
+            createMarketSellOrder(companyId, amount, orderRepository);
+        }
+    }
+
+    private void validateSufficiencyForSellOrder(final long individualId,
+                                                 final long companyId,
+                                                 final long size,
+                                                 final StockRepository stockRepository) {
+        var stocksSize = stockRepository.countIndividualsStocksOfCompany(individualId, companyId);
+        if (Objects.isNull(stocksSize) || stocksSize < size) {
+            throw new IllegalArgumentException("Sell order can't be larger than stocks held");
+        }
+    }
+
+    private void createMarketSellOrder(final long companyId, final long amount, final OrderRepository orderRepository) {
         assert amount > 0;
         assert companyId >= 0;
 
@@ -115,7 +148,7 @@ public class Individual {
         orderRepository.save(order);
     }
 
-    public void createLimitedSellOrder(final long companyId,
+    private void createLimitedSellOrder(final long companyId,
                                        final long amount,
                                        final BigDecimal minPrice,
                                        final BigDecimal maxPrice,

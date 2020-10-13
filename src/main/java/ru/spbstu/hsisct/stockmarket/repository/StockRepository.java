@@ -3,6 +3,7 @@ package ru.spbstu.hsisct.stockmarket.repository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.CrudRepository;
 import org.springframework.data.repository.query.Param;
+import org.springframework.lang.Nullable;
 import org.springframework.stereotype.Repository;
 import ru.spbstu.hsisct.stockmarket.model.Stock;
 
@@ -59,6 +60,7 @@ public interface StockRepository extends CrudRepository<Stock, Long> {
     """, nativeQuery = true)
     List<Stock> findAllBrokerStocksForCompany(@Param("brokerId") final long brokerId, @Param("companyId") final long companyId);
 
+    @Nullable
     @Query(value = """
         SELECT count(*) FROM stock AS s
             WHERE s.id IN (

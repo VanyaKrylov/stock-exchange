@@ -28,6 +28,6 @@ public class OrderDto {
     private Long id;
 
     public boolean isLimitedOrder() {
-        return Objects.nonNull(minPrice);
+        return Objects.nonNull(minPrice) && Objects.nonNull(maxPrice);
     }
 }

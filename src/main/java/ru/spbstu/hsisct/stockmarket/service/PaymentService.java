@@ -23,8 +23,8 @@ public class PaymentService {
     @SuppressWarnings("DuplicatedCode")
     @Transactional
     public void brokerToCompanyPayment(final UUID brokerAccount, final UUID companyAccount, final BigDecimal sum) {
-        var brokerCapital = brokerRepository.findCapitalByBankAccountId(brokerAccount);
-        var companyCapital = companyRepository.findCapitalByBankAccountId(companyAccount);
+        var brokerCapital = brokerRepository.findCapitalByBankAccountId(brokerAccount).orElseThrow();
+        var companyCapital = companyRepository.findCapitalByBankAccountId(companyAccount).orElseThrow();
         if (brokerCapital.compareTo(sum) < 0) {
             throw new IllegalArgumentException("Not enough money on broker account");
         }
@@ -36,8 +36,8 @@ public class PaymentService {
     @SuppressWarnings("DuplicatedCode")
     @Transactional
     public void brokerToIndividualTransfer(final UUID brokerAccount, final UUID individualAccount, final BigDecimal sum) {
-        var brokerCapital = brokerRepository.findCapitalByBankAccountId(brokerAccount);
-        var individualCapital = individualRepository.findCapitalByBankAccountId(individualAccount);
+        var brokerCapital = brokerRepository.findCapitalByBankAccountId(brokerAccount).orElseThrow();
+        var individualCapital = individualRepository.findCapitalByBankAccountId(individualAccount).orElseThrow();
         if (brokerCapital.compareTo(sum) < 0) {
             throw new IllegalArgumentException("Not enough money on broker account");
         }
@@ -48,8 +48,8 @@ public class PaymentService {
 
     @Transactional
     public void individualToBrokerTransfer(final UUID individualAccount, final UUID brokerAccount, final BigDecimal sum) {
-        var brokerCapital = brokerRepository.findCapitalByBankAccountId(brokerAccount);
-        var individualCapital = individualRepository.findCapitalByBankAccountId(individualAccount);
+        var brokerCapital = brokerRepository.findCapitalByBankAccountId(brokerAccount).orElseThrow();
+        var individualCapital = individualRepository.findCapitalByBankAccountId(individualAccount).orElseThrow();
         if (individualCapital.compareTo(sum) < 0) {
             throw new IllegalArgumentException("Not enough money on broker account");
         }

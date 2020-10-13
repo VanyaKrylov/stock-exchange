@@ -67,11 +67,11 @@ public class IndividualController {
         if (!model.containsAttribute("individualCapital")) {
             model.addAttribute("individualCapital", new IndividualCapitalForm());
         }
-        model.addAttribute("individual", individualRepository.findById(userId).orElseThrow());
-        model.addAttribute("stocks", stockRepository.findAllUniqueStocks());
         if (!model.containsAttribute("order")) {
             model.addAttribute("order", new OrderDto());
         }
+        model.addAttribute("individual", individualRepository.findById(userId).orElseThrow());
+        model.addAttribute("stocks", stockRepository.findAllUniqueStocks());
         model.addAttribute("companies", companyRepository.findAll());
         model.addAttribute("ownedOrders", individualFacade.getOwnedOrders(userId));
         model.addAttribute("ownedStocks", individualFacade.getOwnedStocks(userId));
@@ -117,8 +117,9 @@ public class IndividualController {
         if (validateOrderInput(orderDto, bindingResult, redirectAttributes)) {
             try {
                 individualFacade.createSellOrder(userId, orderDto);
-            } catch (Exception e) {
-                log.error(e.getMessage());
+            } catch (IllegalArgumentException e) {
+                redirectAttributes.getFlashAttributes().clear();
+                redirectAttributes.addFlashAttribute("errorMessage", e.getMessage());
             }
         }
         return "redirect:/user/lk/" + userId;

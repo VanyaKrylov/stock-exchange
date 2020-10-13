@@ -41,6 +41,7 @@
         <button type="submit">Buy</button>
         <p th:if="${#fields.hasErrors('id')}" th:errors="*{id}">Id Error</p>
         <p th:if="${#fields.hasErrors('size')}" th:errors="*{size}">Size Error</p>
+        <p th:if="${errorMessage}" th:text="${errorMessage}">Error</p>
     </form>
 </div>
 <div>

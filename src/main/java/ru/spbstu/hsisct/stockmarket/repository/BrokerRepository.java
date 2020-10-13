@@ -9,6 +9,7 @@ import org.springframework.transaction.annotation.Transactional;
 import ru.spbstu.hsisct.stockmarket.model.Broker;
 
 import java.math.BigDecimal;
+import java.util.Optional;
 import java.util.UUID;
 
 @Repository
@@ -35,10 +36,9 @@ public interface BrokerRepository extends CrudRepository<Broker, Long> {
     """)
     void updateCapital(@Param("uuid") final UUID uuid, @Param("sum") final BigDecimal sum);
 
-    @SuppressWarnings("SpringDataRepositoryMethodReturnTypeInspection")
     @Query(value = """
         SELECT capital FROM broker WHERE bank_account_id = :uuid
     """, nativeQuery = true)
-    BigDecimal findCapitalByBankAccountId(@Param("uuid") UUID uuid);
+    Optional<BigDecimal> findCapitalByBankAccountId(@Param("uuid") UUID uuid);
 }
 

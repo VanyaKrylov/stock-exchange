@@ -9,6 +9,7 @@ import org.springframework.stereotype.Repository;
 import ru.spbstu.hsisct.stockmarket.model.Company;
 
 import java.math.BigDecimal;
+import java.util.Optional;
 import java.util.UUID;
 
 @Repository
@@ -24,5 +25,5 @@ public interface CompanyRepository extends CrudRepository<Company, Long> {
     @Query(value = """
         SELECT capital FROM company WHERE bank_account_id = :uuid
     """, nativeQuery = true)
-    BigDecimal findCapitalByBankAccountId(@Param("uuid") UUID companyAccount);
+    Optional<BigDecimal> findCapitalByBankAccountId(@Param("uuid") UUID companyAccount);
 }
