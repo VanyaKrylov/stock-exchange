@@ -14,6 +14,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 import ru.spbstu.hsisct.stockmarket.facade.BrokerFacade;
 import ru.spbstu.hsisct.stockmarket.model.Broker;
@@ -26,6 +27,7 @@ import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Positive;
 import javax.validation.constraints.PositiveOrZero;
 import java.math.BigDecimal;
+import java.util.List;
 
 @Slf4j
 @Controller
