@@ -207,6 +207,18 @@ CREATE TABLE IF NOT EXISTS PAYMENT
     "recipient" uuid NOT NULL,
     "amount" numeric(16,2) NOT NULL,
     "timestamp" timestamp NOT NULL
+);
+
+CREATE TABLE IF NOT EXISTS CUSTOM_USER
+(
+    "username" varchar(64) PRIMARY KEY NOT NULL,
+    "password" varchar(64) NOT NULL,
+    "role" varchar(32) NOT NULL,
+    "id" bigint NOT NULL,
+    "account_non_expired" bool,
+    "account_non_locked" bool,
+    "credentials_non_expired" bool,
+    "enabled" bool
 )
 
 /*ALTER TABLE "stock" ADD CONSTRAINT "stock_fk0" FOREIGN KEY ("company_id") REFERENCES "company"("id") ON UPDATE CASCADE ON DELETE CASCADE;

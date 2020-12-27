@@ -5,6 +5,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.Authentication;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
@@ -14,6 +15,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
+import ru.spbstu.hsisct.stockmarket.configuration.security.service.CustomUser;
 import ru.spbstu.hsisct.stockmarket.facade.BrokerFacade;
 import ru.spbstu.hsisct.stockmarket.model.Broker;
 import ru.spbstu.hsisct.stockmarket.repository.BrokerRepository;
@@ -32,7 +34,8 @@ public class RestBrokerController {
     private final BrokerRepository brokerRepository;
 
     @GetMapping("/all")
-    public List<Broker> getAllBrokers() {
+    public List<Broker> getAllBrokers(final Authentication authentication) {
+        log.info(String.valueOf(((CustomUser)authentication.getPrincipal()).getId()));
         return brokerFacade.getAllBrokers();
     }
 

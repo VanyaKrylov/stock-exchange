@@ -1,4 +1,4 @@
-package ru.spbstu.hsisct.stockmarket.configuration;
+package ru.spbstu.hsisct.stockmarket.configuration.security.filter;
 
 import com.auth0.jwt.JWT;
 import com.auth0.jwt.algorithms.Algorithm;
@@ -8,8 +8,8 @@ import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.filter.OncePerRequestFilter;
+import ru.spbstu.hsisct.stockmarket.configuration.security.service.CustomUser;
 
-import javax.servlet.Filter;
 import javax.servlet.FilterChain;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
@@ -19,9 +19,9 @@ import java.util.List;
 import java.util.Objects;
 import java.util.stream.Collectors;
 
-import static ru.spbstu.hsisct.stockmarket.configuration.JwtAuthenticationFilter.AUTHORIZATION_HEADER;
-import static ru.spbstu.hsisct.stockmarket.configuration.JwtAuthenticationFilter.ROLE_CLAIM;
-import static ru.spbstu.hsisct.stockmarket.configuration.JwtAuthenticationFilter.SECRET;
+import static ru.spbstu.hsisct.stockmarket.configuration.security.filter.JwtAuthenticationFilter.AUTHORIZATION_HEADER;
+import static ru.spbstu.hsisct.stockmarket.configuration.security.filter.JwtAuthenticationFilter.ROLE_CLAIM;
+import static ru.spbstu.hsisct.stockmarket.configuration.security.filter.JwtAuthenticationFilter.SECRET;
 
 public class JwtAuthorizationFilter extends OncePerRequestFilter {
     @Override
@@ -36,8 +36,10 @@ public class JwtAuthorizationFilter extends OncePerRequestFilter {
                         .verify(token.replace("Bearer ", ""));
                 final String username = decodedJWT.getSubject();
                 final List<String> role = decodedJWT.getClaim(ROLE_CLAIM).asList(String.class);
+                final Long id = decodedJWT.getClaim("Id").asLong();
                 final List<GrantedAuthority> grantedAuthorities = role.stream().map(SimpleGrantedAuthority::new).collect(Collectors.toList());
-                SecurityContextHolder.getContext().setAuthentication(new UsernamePasswordAuthenticationToken(username, null, grantedAuthorities));
+                SecurityContextHolder.getContext().setAuthentication(new UsernamePasswordAuthenticationToken(
+                        new CustomUser(username, "", role.get(0), id), null, grantedAuthorities));
                 filterChain.doFilter(httpServletRequest, httpServletResponse);
             }
         } catch (Exception e) {
