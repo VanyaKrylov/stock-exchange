@@ -15,7 +15,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
-import ru.spbstu.hsisct.stockmarket.configuration.security.service.CustomUser;
+import ru.spbstu.hsisct.stockmarket.configuration.security.model.CustomUser;
 import ru.spbstu.hsisct.stockmarket.facade.BrokerFacade;
 import ru.spbstu.hsisct.stockmarket.model.Broker;
 import ru.spbstu.hsisct.stockmarket.repository.BrokerRepository;

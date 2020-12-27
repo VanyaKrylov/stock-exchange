@@ -1,20 +1,16 @@
-package ru.spbstu.hsisct.stockmarket.configuration.security.service;
+package ru.spbstu.hsisct.stockmarket.configuration.security.model;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;
-import lombok.Getter;
 import lombok.NoArgsConstructor;
-import lombok.Setter;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
-import org.springframework.security.core.userdetails.User;
 import org.springframework.security.core.userdetails.UserDetails;
 
 import javax.persistence.Entity;
 import javax.persistence.Id;
 import javax.persistence.Transient;
 import java.util.Collection;
-import java.util.Collections;
 import java.util.Set;
 
 @Data
@@ -22,13 +18,6 @@ import java.util.Set;
 @NoArgsConstructor
 @AllArgsConstructor
 public class CustomUser implements UserDetails {
-    public CustomUser(String username, String password, String role, Long id) {
-        this.username = username;
-        this.password = password;
-        this.role = role;
-        this.id = id;
-    }
-
     @Id
     private String username;
     private String password;
@@ -40,6 +29,13 @@ public class CustomUser implements UserDetails {
     private boolean enabled = true;
     @Transient
     private Set<GrantedAuthority> authorities;
+
+    public CustomUser(String username, String password, String role, Long id) {
+        this.username = username;
+        this.password = password;
+        this.role = role;
+        this.id = id;
+    }
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {

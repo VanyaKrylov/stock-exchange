@@ -8,7 +8,7 @@ import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.filter.OncePerRequestFilter;
-import ru.spbstu.hsisct.stockmarket.configuration.security.service.CustomUser;
+import ru.spbstu.hsisct.stockmarket.configuration.security.model.CustomUser;
 
 import javax.servlet.FilterChain;
 import javax.servlet.ServletException;

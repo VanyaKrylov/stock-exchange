@@ -2,7 +2,7 @@ package ru.spbstu.hsisct.stockmarket.configuration.security.repository;
 
 
 import org.springframework.data.repository.Repository;
-import ru.spbstu.hsisct.stockmarket.configuration.security.service.CustomUser;
+import ru.spbstu.hsisct.stockmarket.configuration.security.model.CustomUser;
 
 import java.util.Optional;
 

@@ -11,10 +11,9 @@ import org.springframework.security.authentication.UsernamePasswordAuthenticatio
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.core.GrantedAuthority;
-import org.springframework.security.core.userdetails.User;
 import org.springframework.security.web.authentication.AbstractAuthenticationProcessingFilter;
 import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
-import ru.spbstu.hsisct.stockmarket.configuration.security.service.CustomUser;
+import ru.spbstu.hsisct.stockmarket.configuration.security.model.CustomUser;
 
 import javax.servlet.FilterChain;
 import javax.servlet.ServletException;
@@ -30,6 +29,9 @@ public class JwtAuthenticationFilter extends AbstractAuthenticationProcessingFil
     public static final String AUTHORIZATION_HEADER = "Authorization";
     public static final String SECRET = "secret";
     public static final String ROLE_CLAIM = "Role";
+    public static final String ROLE_HEADER = "Role";
+
+    private static final ObjectMapper OBJECT_MAPPER = new ObjectMapper();
 
     public JwtAuthenticationFilter(String url, AuthenticationManager authenticationManager) {
         super(new AntPathRequestMatcher(url));
@@ -59,7 +61,10 @@ public class JwtAuthenticationFilter extends AbstractAuthenticationProcessingFil
                 .withClaim("Id", ((CustomUser)authResult.getPrincipal()).getId())
                 .withExpiresAt(new Date(System.currentTimeMillis() + 10003000))
                 .sign(Algorithm.HMAC512(SECRET));
+        final var role = authResult.getAuthorities().stream().map(GrantedAuthority::getAuthority).findFirst().orElseThrow();
+        final var responseBody = OBJECT_MAPPER.createObjectNode().put("location", "api/v0/" + role.toLowerCase() + "/lk/");
         response.addHeader(AUTHORIZATION_HEADER, "Bearer " + token);
+        response.getWriter().write(OBJECT_MAPPER.writerWithDefaultPrettyPrinter().writeValueAsString(responseBody));
     }
 
     @Data
