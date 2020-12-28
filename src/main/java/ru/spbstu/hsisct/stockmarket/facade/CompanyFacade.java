@@ -27,6 +27,10 @@ public class CompanyFacade {
         company.publishStocks(type, amount, price, stockRepository, orderRepository);
     }
 
+    public BigDecimal getCapital(final Long companyId) {
+        return companyRepository.findById(companyId).orElseThrow().getCapital();
+    }
+
     @Data
     static class Investor {
         private final Long id;
