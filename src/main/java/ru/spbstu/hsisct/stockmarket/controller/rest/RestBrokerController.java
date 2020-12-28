@@ -5,19 +5,14 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.validation.annotation.Validated;
-import org.springframework.web.bind.MethodArgumentNotValidException;
-import org.springframework.web.bind.annotation.DeleteMapping;
-import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 import ru.spbstu.hsisct.stockmarket.configuration.security.model.CustomUser;
 import ru.spbstu.hsisct.stockmarket.dto.OrderInfoDto;
@@ -47,14 +42,6 @@ public class RestBrokerController {
     @GetMapping("/all")
     public List<Broker> getAllBrokers() {
         return brokerFacade.getAllBrokers();
-    }
-
-    @PostMapping("/new")
-    public ResponseEntity<Void> createNewBroker(@RequestBody @Valid Broker broker) {
-        log.info(broker.getName());
-        return ResponseEntity
-                .created(URI.create("broker/lk/" + brokerRepository.save(broker).getId())) //TODO change url
-                .build();
     }
 
     @GetMapping("/lk/capital")

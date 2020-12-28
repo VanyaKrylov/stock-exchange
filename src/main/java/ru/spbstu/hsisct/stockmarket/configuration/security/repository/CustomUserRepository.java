@@ -9,4 +9,5 @@ import java.util.Optional;
 public interface CustomUserRepository extends Repository<CustomUser, String> {
 
     Optional<CustomUser> findByUsername(final String username);
+    CustomUser save(CustomUser customUser);
 }
