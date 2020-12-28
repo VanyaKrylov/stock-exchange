@@ -15,6 +15,8 @@ import org.springframework.web.bind.annotation.RestController;
 import ru.spbstu.hsisct.stockmarket.configuration.security.model.CustomUser;
 import ru.spbstu.hsisct.stockmarket.configuration.security.repository.CustomUserRepository;
 import ru.spbstu.hsisct.stockmarket.model.Broker;
+import ru.spbstu.hsisct.stockmarket.model.Company;
+import ru.spbstu.hsisct.stockmarket.model.Individual;
 import ru.spbstu.hsisct.stockmarket.repository.BrokerRepository;
 import ru.spbstu.hsisct.stockmarket.repository.CompanyRepository;
 import ru.spbstu.hsisct.stockmarket.repository.IndividualRepository;
@@ -43,7 +45,6 @@ public class SignUpController {
 
     @PostMapping("/broker")
     public ResponseEntity<Void> createNewBroker(@RequestBody @Valid BrokerDto broker) {
-        log.info(broker.getName());
         if (customUserRepository.findByUsername(broker.getName()).isPresent()) {
             throw new IllegalArgumentException(String.format("Username %s for broker is already taken", broker.getName()));
         }
@@ -51,7 +52,33 @@ public class SignUpController {
         customUserRepository.save(new CustomUser(broker.getName(), "{noop}"+broker.getPassword(),"BROKER", brokerEntity.getId()));
 
         return ResponseEntity
-                .created(URI.create("broker/lk/")) //TODO change url
+                .created(URI.create("broker/lk/"))
+                .build();
+    }
+
+    @PostMapping("/company")
+    public ResponseEntity<Void> createNewCompany(@RequestBody @Valid CompanyDto companyDto) {
+        if (customUserRepository.findByUsername(companyDto.getName()).isPresent()) {
+            throw new IllegalArgumentException(String.format("Username %s for broker is already taken", companyDto.getName()));
+        }
+        var companyEntity = companyRepository.save(new Company(companyDto.getName(), companyDto.getCapital()));
+        customUserRepository.save(new CustomUser(companyDto.getName(), "{noop}"+companyDto.getPassword(),"COMPANY", companyEntity.getId()));
+
+        return ResponseEntity
+                .created(URI.create("company/lk/"))
+                .build();
+    }
+
+    @PostMapping("/user")
+    public ResponseEntity<Void> createNewIndividual(@RequestBody @Valid IndividualDto individualDto) {
+        if (customUserRepository.findByUsername(individualDto.getName()).isPresent()) {
+            throw new IllegalArgumentException(String.format("Username %s for broker is already taken", individualDto.getName()));
+        }
+        var individualEntity = individualRepository.save(new Individual(individualDto.getName(), individualDto.getSurname(), individualDto.getBroker(), individualDto.getCapital()));
+        customUserRepository.save(new CustomUser(individualDto.getName(), "{noop}"+individualDto.getPassword(),"USER", individualEntity.getId()));
+
+        return ResponseEntity
+                .created(URI.create("individual/lk/"))
                 .build();
     }
 
