@@ -17,6 +17,8 @@ import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 import ru.spbstu.hsisct.stockmarket.configuration.security.model.CustomUser;
 import ru.spbstu.hsisct.stockmarket.facade.CompanyFacade;
+import ru.spbstu.hsisct.stockmarket.model.Company;
+import ru.spbstu.hsisct.stockmarket.repository.CompanyRepository;
 import ru.spbstu.hsisct.stockmarket.repository.StockRepository;
 
 import javax.validation.Valid;
@@ -27,6 +29,7 @@ import javax.validation.constraints.Positive;
 import javax.validation.constraints.PositiveOrZero;
 import java.math.BigDecimal;
 import java.net.URI;
+import java.nio.charset.CoderResult;
 import java.util.List;
 
 @RestController
@@ -34,6 +37,12 @@ import java.util.List;
 @RequiredArgsConstructor
 public class RestCompanyController {
     private final CompanyFacade companyFacade;
+    private final CompanyRepository companyRepository;
+
+    @GetMapping("/all")
+    public Iterable<Company> getAllCompanies() {
+        return companyRepository.findAll();
+    }
 
     @GetMapping("/lk/capital")
     public BigDecimal getCapital(final Authentication authentication) {

@@ -5,6 +5,7 @@ import org.springframework.stereotype.Service;
 import ru.spbstu.hsisct.stockmarket.dto.OrderDto;
 import ru.spbstu.hsisct.stockmarket.dto.OrderInfoDto;
 import ru.spbstu.hsisct.stockmarket.dto.StockDto;
+import ru.spbstu.hsisct.stockmarket.model.Stock;
 import ru.spbstu.hsisct.stockmarket.repository.CompanyRepository;
 import ru.spbstu.hsisct.stockmarket.repository.IndividualRepository;
 import ru.spbstu.hsisct.stockmarket.repository.OrderRepository;
@@ -59,5 +60,13 @@ public class IndividualFacade {
         var individual = individualRepository.findById(individualId).orElseThrow();
 
         return individual.getAllOwnedStocksGroupedByCompanies(stockRepository, companyRepository);
+    }
+
+    public BigDecimal getCapital(final Long individaulId) {
+        return individualRepository.findById(individaulId).orElseThrow().getCapital();
+    }
+
+    public List<Stock> getAvailableStocks() {
+        return stockRepository.findAllUniqueStocks();
     }
 }

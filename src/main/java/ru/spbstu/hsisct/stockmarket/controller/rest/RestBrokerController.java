@@ -90,9 +90,8 @@ public class RestBrokerController {
     public ResponseEntity<Void> purchaseClientOrders(final Authentication authentication,
                                                      @RequestBody final OrderIdSizeAndPrice orderIdSizeAndPrice) {
         brokerFacade.buyStocksFromOrder(getId(authentication), orderIdSizeAndPrice.getOrderId(), orderIdSizeAndPrice.getSize(), orderIdSizeAndPrice.getPrice());
-        return ResponseEntity
-                .created(URI.create("broker/lk/owned-stocks"))
-                .build();
+
+        return ResponseEntity.ok().build();
     }
 
     @PatchMapping(path = "/lk/client-orders", params = "sell")
