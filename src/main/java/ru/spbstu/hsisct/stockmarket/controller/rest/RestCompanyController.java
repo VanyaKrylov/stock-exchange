@@ -63,17 +63,6 @@ public class RestCompanyController {
                 .build();
     }
 
-    @ResponseStatus(HttpStatus.BAD_REQUEST)
-    @ExceptionHandler(MethodArgumentNotValidException.class)
-    public ErrorMessage exceptionHandler(MethodArgumentNotValidException e) {
-        StringBuilder errMsg = new StringBuilder();
-        for (var fieldError : e.getBindingResult().getFieldErrors()) {
-            errMsg.append(fieldError.getDefaultMessage()).append(";\n");
-        }
-
-        return new ErrorMessage(errMsg.toString());
-    }
-
     private Long getId(final Authentication authentication) {
         return ((CustomUser)authentication.getPrincipal()).getId();
     }

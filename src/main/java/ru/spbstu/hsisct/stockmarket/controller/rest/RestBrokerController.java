@@ -45,12 +45,12 @@ public class RestBrokerController {
     private final BrokerRepository brokerRepository;
 
     @GetMapping("/all")
-    public List<Broker> getAllBrokers(final Authentication authentication) {
+    public List<Broker> getAllBrokers() {
         return brokerFacade.getAllBrokers();
     }
 
     @PostMapping("/new")
-    public ResponseEntity<Void> createNewBroker(@Valid @RequestBody Broker broker) {
+    public ResponseEntity<Void> createNewBroker(@RequestBody @Valid Broker broker) {
         log.info(broker.getName());
         return ResponseEntity
                 .created(URI.create("broker/lk/" + brokerRepository.save(broker).getId())) //TODO change url
@@ -68,7 +68,7 @@ public class RestBrokerController {
     }
 
     @PostMapping("/lk/company-stocks")
-    public ResponseEntity<Void> buyCompanyStocks(final Authentication authentication, @RequestBody final OrderIdAndSize orderIdAndSize) {
+    public ResponseEntity<Void> buyCompanyStocks(final Authentication authentication, @RequestBody @Valid final OrderIdAndSize orderIdAndSize) {
         brokerFacade.addStocks(getId(authentication), orderIdAndSize.getId(), orderIdAndSize.getSize());
 
         return ResponseEntity
@@ -88,7 +88,7 @@ public class RestBrokerController {
 
     @PatchMapping(path = "/lk/client-orders", params = "buy")
     public ResponseEntity<Void> purchaseClientOrders(final Authentication authentication,
-                                                     @RequestBody final OrderIdSizeAndPrice orderIdSizeAndPrice) {
+                                                     @RequestBody @Valid final OrderIdSizeAndPrice orderIdSizeAndPrice) {
         brokerFacade.buyStocksFromOrder(getId(authentication), orderIdSizeAndPrice.getOrderId(), orderIdSizeAndPrice.getSize(), orderIdSizeAndPrice.getPrice());
 
         return ResponseEntity.ok().build();
@@ -96,44 +96,22 @@ public class RestBrokerController {
 
     @PatchMapping(path = "/lk/client-orders", params = "sell")
     public ResponseEntity<Void> sellClientOrders(final Authentication authentication,
-                                                     @RequestBody final OrderIdSizeAndPrice orderIdSizeAndPrice) {
+                                                 @RequestBody @Valid final OrderIdSizeAndPrice orderIdSizeAndPrice) {
         brokerFacade.sellStocksForOrder(getId(authentication), orderIdSizeAndPrice.getOrderId(), orderIdSizeAndPrice.getSize(), orderIdSizeAndPrice.getPrice());
 
         return ResponseEntity.ok().build();
     }
 
     @PatchMapping(path = "/lk/client-orders", params = "publish", consumes = "application/json")
-    public ResponseEntity<Void> publishClientOrder(@RequestBody final OrderId orderId, final Authentication authentication) {
+    public ResponseEntity<Void> publishClientOrder(final Authentication authentication, @RequestBody @Valid final OrderId orderId) {
         brokerFacade.publishOrder(getId(authentication), orderId.getOrderId());
 
         return ResponseEntity.ok().build();
     }
 
-    @ResponseStatus(HttpStatus.BAD_REQUEST)
-    @ExceptionHandler(MethodArgumentNotValidException.class)
-    public ErrorMessage exceptionHandler(MethodArgumentNotValidException e) {
-        StringBuilder errMsg = new StringBuilder();
-        for (var fieldError : e.getBindingResult().getFieldErrors()) {
-            errMsg.append(fieldError.getDefaultMessage()).append(";\n");
-        }
-
-        return new ErrorMessage(errMsg.toString());
-    }
-
-    @ResponseStatus(HttpStatus.BAD_REQUEST)
-    @ExceptionHandler(IllegalArgumentException.class)
-    public ErrorMessage illegalArgumentExceptionHandler(final IllegalArgumentException e) {
-        return new ErrorMessage(e.getMessage());
-    }
-
     private Long getId(final Authentication authentication) {
         return ((CustomUser)authentication.getPrincipal()).getId();
     }
-}
-
-@Data
-class ErrorMessage {
-    final String error;
 }
 
 @Data
@@ -166,5 +144,7 @@ class OrderIdSizeAndPrice {
 @Data
 @NoArgsConstructor
 class OrderId {
+    @NotNull(message = "Order id can't be empty")
+    @PositiveOrZero(message = "Value must be positive")
     private Long orderId;
 }

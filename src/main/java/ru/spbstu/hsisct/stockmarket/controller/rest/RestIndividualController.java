@@ -8,6 +8,7 @@ import org.postgresql.ds.common.BaseDataSource;
 import org.springframework.data.mapping.callback.ReactiveEntityCallbacks;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PatchMapping;
@@ -23,6 +24,7 @@ import ru.spbstu.hsisct.stockmarket.model.Stock;
 import ru.spbstu.hsisct.stockmarket.repository.StockRepository;
 
 import javax.validation.Valid;
+import javax.validation.constraints.DecimalMin;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.PositiveOrZero;
 import java.math.BigDecimal;
@@ -65,7 +67,7 @@ public class RestIndividualController {
     }
 
     @PatchMapping(path = "/lk/orders", params = "buy")
-    public ResponseEntity<Void> createBuyOrder(final Authentication authentication, @RequestBody @Valid OrderDto orderDto) {
+    public ResponseEntity<Void> createBuyOrder(@Valid @RequestBody OrderDto orderDto, final Authentication authentication) {
         individualFacade.createBuyOrder(getId(authentication), orderDto);
 
         return ResponseEntity.ok().build();
@@ -79,7 +81,7 @@ public class RestIndividualController {
     }
 
     @DeleteMapping("/lk/orders")
-    public ResponseEntity<Void> deteleOrder(final Authentication authentication, @RequestBody OrderId orderId) {
+    public ResponseEntity<Void> deteleOrder(final Authentication authentication, @RequestBody @Valid OrderId orderId) {
         individualFacade.deleteOrder(getId(authentication), orderId.getOrderId());
 
         return ResponseEntity.ok().build();
@@ -95,6 +97,6 @@ public class RestIndividualController {
 @AllArgsConstructor
 class IndividualCapitalForm {
     @NotNull
-    @PositiveOrZero
+    @DecimalMin("0")
     private BigDecimal capital;
 }
