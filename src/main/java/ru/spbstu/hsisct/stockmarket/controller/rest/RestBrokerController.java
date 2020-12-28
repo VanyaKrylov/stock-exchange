@@ -13,6 +13,7 @@ import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -85,7 +86,7 @@ public class RestBrokerController {
         return brokerFacade.getAllClientsOrders(getId(authentication));
     }
 
-    @PostMapping("/lk/client-orders")
+    @PatchMapping(path = "/lk/client-orders", params = "buy")
     public ResponseEntity<Void> purchaseClientOrders(final Authentication authentication,
                                                      @RequestBody final OrderIdSizeAndPrice orderIdSizeAndPrice) {
         brokerFacade.buyStocksFromOrder(getId(authentication), orderIdSizeAndPrice.getOrderId(), orderIdSizeAndPrice.getSize(), orderIdSizeAndPrice.getPrice());
@@ -94,10 +95,17 @@ public class RestBrokerController {
                 .build();
     }
 
-    @DeleteMapping("/lk/client-orders")
+    @PatchMapping(path = "/lk/client-orders", params = "sell")
     public ResponseEntity<Void> sellClientOrders(final Authentication authentication,
                                                      @RequestBody final OrderIdSizeAndPrice orderIdSizeAndPrice) {
         brokerFacade.sellStocksForOrder(getId(authentication), orderIdSizeAndPrice.getOrderId(), orderIdSizeAndPrice.getSize(), orderIdSizeAndPrice.getPrice());
+
+        return ResponseEntity.ok().build();
+    }
+
+    @PatchMapping(path = "/lk/client-orders", params = "publish", consumes = "application/json")
+    public ResponseEntity<Void> publishClientOrder(@RequestBody final OrderId orderId, final Authentication authentication) {
+        brokerFacade.publishOrder(getId(authentication), orderId.getOrderId());
 
         return ResponseEntity.ok().build();
     }
@@ -111,6 +119,12 @@ public class RestBrokerController {
         }
 
         return new ErrorMessage(errMsg.toString());
+    }
+
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    @ExceptionHandler(IllegalArgumentException.class)
+    public ErrorMessage illegalArgumentExceptionHandler(final IllegalArgumentException e) {
+        return new ErrorMessage(e.getMessage());
     }
 
     private Long getId(final Authentication authentication) {
@@ -148,4 +162,10 @@ class OrderIdSizeAndPrice {
     @NotNull(message = "Price can't be empty")
     @DecimalMin(value = "0")
     private BigDecimal price;
+}
+
+@Data
+@NoArgsConstructor
+class OrderId {
+    private Long orderId;
 }

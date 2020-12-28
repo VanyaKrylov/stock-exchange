@@ -6,6 +6,7 @@ import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 import org.springframework.lang.Nullable;
 import ru.spbstu.hsisct.stockmarket.dto.StockDto;
+import ru.spbstu.hsisct.stockmarket.model.enums.OrderStatus;
 import ru.spbstu.hsisct.stockmarket.repository.BrokerRepository;
 import ru.spbstu.hsisct.stockmarket.repository.CompanyRepository;
 import ru.spbstu.hsisct.stockmarket.repository.IndividualRepository;
@@ -189,9 +190,18 @@ public class Broker {
 
     public void publishOrder(final Long orderId, final OrderRepository orderRepository) {
         assert  orderId >= 0;
-
         var order = orderRepository.findById(orderId).orElseThrow();
+        validateOrder(order);
         order.setPublic(true);
         orderRepository.save(order);
+    }
+
+    private void validateOrder(final Order order) {
+        if (!Objects.equals(order.getBrokerId(), this.id)) {
+            throw new IllegalArgumentException(String.format("Order %d doesn't belong to this broker", order.getId()));
+        }
+        if (!Objects.equals(order.getOrderStatus(), OrderStatus.ACTIVE)) {
+            throw new IllegalArgumentException(String.format("The order %d is CLOSED, you can't change it", order.getId()));
+        }
     }
 }
