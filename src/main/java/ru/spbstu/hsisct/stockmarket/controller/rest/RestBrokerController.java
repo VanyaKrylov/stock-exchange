@@ -10,6 +10,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.MethodArgumentNotValidException;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -65,7 +66,7 @@ public class RestBrokerController {
         return brokerFacade.getAvailableCompanyStocks(getId(authentication));
     }
 
-    @PostMapping("/lk/buy-company-stocks")
+    @PostMapping("/lk/company-stocks")
     public ResponseEntity<Void> buyCompanyStocks(final Authentication authentication, @RequestBody final OrderIdAndSize orderIdAndSize) {
         brokerFacade.addStocks(getId(authentication), orderIdAndSize.getId(), orderIdAndSize.getSize());
 
@@ -82,6 +83,23 @@ public class RestBrokerController {
     @GetMapping("/lk/client-orders")
     public List<OrderInfoDto> clientOrders(final Authentication authentication) {
         return brokerFacade.getAllClientsOrders(getId(authentication));
+    }
+
+    @PostMapping("/lk/client-orders")
+    public ResponseEntity<Void> purchaseClientOrders(final Authentication authentication,
+                                                     @RequestBody final OrderIdSizeAndPrice orderIdSizeAndPrice) {
+        brokerFacade.buyStocksFromOrder(getId(authentication), orderIdSizeAndPrice.getOrderId(), orderIdSizeAndPrice.getSize(), orderIdSizeAndPrice.getPrice());
+        return ResponseEntity
+                .created(URI.create("broker/lk/owned-stocks"))
+                .build();
+    }
+
+    @DeleteMapping("/lk/client-orders")
+    public ResponseEntity<Void> sellClientOrders(final Authentication authentication,
+                                                     @RequestBody final OrderIdSizeAndPrice orderIdSizeAndPrice) {
+        brokerFacade.sellStocksForOrder(getId(authentication), orderIdSizeAndPrice.getOrderId(), orderIdSizeAndPrice.getSize(), orderIdSizeAndPrice.getPrice());
+
+        return ResponseEntity.ok().build();
     }
 
     @ResponseStatus(HttpStatus.BAD_REQUEST)

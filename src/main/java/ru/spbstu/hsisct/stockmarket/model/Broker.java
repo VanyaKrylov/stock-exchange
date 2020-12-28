@@ -180,7 +180,11 @@ public class Broker {
         paymentService.individualToBrokerTransfer(individual.getBankAccountId(), this.bankAccountId, totalSum);
         brokerStocksForGivenCompany.subList(0, amount.intValue()).forEach(stock -> individualRepository.addStock(individual.getId(), stock.getId()));
         order.setSize(order.getSize() - amount);
-        orderRepository.save(order);
+        if (order.getSize() == 0) {
+            orderRepository.deleteById(order.getId());
+        } else {
+            orderRepository.save(order);
+        }
     }
 
     public void publishOrder(final Long orderId, final OrderRepository orderRepository) {
