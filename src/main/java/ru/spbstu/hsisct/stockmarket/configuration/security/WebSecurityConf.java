@@ -12,8 +12,14 @@ import org.springframework.security.crypto.factory.PasswordEncoderFactories;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.authentication.HttpStatusEntryPoint;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
+import org.springframework.web.cors.CorsConfiguration;
+import org.springframework.web.cors.CorsConfigurationSource;
+import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 import ru.spbstu.hsisct.stockmarket.configuration.security.filter.JwtAuthenticationFilter;
 import ru.spbstu.hsisct.stockmarket.configuration.security.filter.JwtAuthorizationFilter;
+
+import java.util.Arrays;
+import java.util.Collections;
 
 @EnableWebSecurity
 @EnableGlobalMethodSecurity(securedEnabled = true)
@@ -21,7 +27,7 @@ public class WebSecurityConf extends WebSecurityConfigurerAdapter {
 
     @Override
     public void configure(WebSecurity web) throws Exception {
-        web.ignoring().antMatchers("/js/**", "/favicon.ico");
+        web.ignoring().antMatchers("/js/**", "/favicon.ico", "/api/v0/broker/all");
     }
 
     @Override
@@ -31,6 +37,9 @@ public class WebSecurityConf extends WebSecurityConfigurerAdapter {
                 .and()
                     .csrf().disable()
                     .authorizeRequests()
+                    .antMatchers("/api/v0/broker/lk/**").hasAuthority("BROKER")
+                    .antMatchers("/api/v0/user/lk/**").hasAuthority("USER")
+                    .antMatchers("/api/v0/company/lk/**").hasAuthority("COMPANY")
                     .antMatchers("/api/**").hasAnyAuthority("USER", "BROKER", "COMPANY")
                     //.antMatchers("/login").permitAll()
                     //.anyRequest().authenticated()
@@ -43,55 +52,17 @@ public class WebSecurityConf extends WebSecurityConfigurerAdapter {
     }
 
     @Bean
-    public PasswordEncoder passwordEncoder() {
-        return PasswordEncoderFactories.createDelegatingPasswordEncoder();
-    }
-
-    /*@Override
-    public void configure(AuthenticationManagerBuilder auth) throws Exception {
-        auth
-                .inMemoryAuthentication()
-                .withUser("admin").password("{noop}password").authorities("USER", "ADMIN")
-                .and()
-                .withUser("user").password("{noop}password").authorities("USER");
-    }*/
-
- /*   @Bean
-    public UserDetailsService userDetailsService() {
-        //@formatter:off
-        final var brokerUserDetails = new CustomUser.CustomUserBuilder(
-            User.withUsername("broker")
-                .password("{noop}password")
-                .authorities("BROKER")
-                .build())
-        .buildWithId(111);
-        final var companyUserDetails = new CustomUser.CustomUserBuilder(
-            User.withUsername("company")
-                .password("{noop}password")
-                .authorities("COMPANY")
-                .build())
-        .buildWithId(222);
-        final var userUserDetails = new CustomUser.CustomUserBuilder(
-            User.withUsername("user")
-                .password("{noop}password")
-                .authorities("USER")
-                .build())
-        .buildWithId(333);
-        //@formatter:on
-
-        return new InMemoryUserDetailsManager(brokerUserDetails, companyUserDetails, userUserDetails);
-    }*/
-
-    /*@Bean
-    CorsConfigurationSource corsConfigurationSource() {
+    public CorsConfigurationSource corsConfigurationSource() {
         CorsConfiguration config = new CorsConfiguration();
         config.setAllowCredentials(true);
-        config.setAllowedOrigins(Arrays.asList("http://localhost:8080"));
+        config.setAllowedOrigins(Collections.singletonList("http://localhost:8080"));
         config.addAllowedHeader("*");
         config.addAllowedMethod("*");
+        config.setExposedHeaders(Arrays.asList("Access-Control-Allow-Headers", "Authorization, x-xsrf-token, Access-Control-Allow-Headers, Origin, Accept, X-Requested-With, " +
+                "Content-Type, Access-Control-Request-Method, Access-Control-Request-Headers"));
         UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
         source.registerCorsConfiguration("/**", config);
         return source;
-    }*/
+    }
 }
 
