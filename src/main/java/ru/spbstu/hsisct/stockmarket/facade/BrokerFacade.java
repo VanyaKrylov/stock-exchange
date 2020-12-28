@@ -83,4 +83,8 @@ public class BrokerFacade {
         var broker = brokerRepository.findById(brokerId).orElseThrow();
         broker.publishOrder(orderId, orderRepository);
     }
+
+    public BigDecimal getBrokerCapital(final Long brokerId) {
+        return brokerRepository.findById(brokerId).orElseThrow().getCapital();
+    }
 }

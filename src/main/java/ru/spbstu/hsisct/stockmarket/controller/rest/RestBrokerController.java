@@ -21,6 +21,7 @@ import ru.spbstu.hsisct.stockmarket.model.Broker;
 import ru.spbstu.hsisct.stockmarket.repository.BrokerRepository;
 
 import javax.validation.Valid;
+import java.math.BigDecimal;
 import java.net.URI;
 import java.util.List;
 
@@ -45,6 +46,11 @@ public class RestBrokerController {
         return ResponseEntity
                 .created(URI.create("broker/lk/" + brokerRepository.save(broker).getId())) //TODO change url
                 .build();
+    }
+
+    @GetMapping("/lk/capital")
+    public BigDecimal brokerCapital(final Authentication authentication) {
+        return brokerFacade.getBrokerCapital(((CustomUser)authentication.getPrincipal()).getId());
     }
 
     @ResponseStatus(HttpStatus.BAD_REQUEST)
