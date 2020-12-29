@@ -3,7 +3,8 @@ package ru.spbstu.hsisct.stockmarket;
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
 
-@SpringBootTest
+/*
+//@SpringBootTest
 class StockMarketApplicationTests {
 
     @Test
@@ -11,3 +12,4 @@ class StockMarketApplicationTests {
     }
 
 }
+*/

@@ -12,6 +12,7 @@
     <artifactId>stockmarket</artifactId>
     <version>0.0.1-SNAPSHOT</version>
     <name>stockmarket</name>
+    <packaging>war</packaging>
     <description>Stock Market demo project</description>
 
     <properties>
@@ -83,6 +84,11 @@
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-security</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-tomcat</artifactId>
+            <scope>provided</scope>
         </dependency>
         <dependency>
             <groupId>com.auth0</groupId>
